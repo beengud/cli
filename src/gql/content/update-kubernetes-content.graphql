@@ -1,0 +1,14 @@
+mutation UpdateKubernetesContent(
+  $input: KubernetesContentInput!
+  $rematerializationAction: RematerializationAction
+) {
+  updateKubernetesContent(
+    input: $input
+    rematerializationAction: $rematerializationAction
+  ) {
+    otelLogsDatasetId
+    prometheusDatasetId
+    entityDatasetId
+    kubernetesLogsDatasetId
+  }
+}

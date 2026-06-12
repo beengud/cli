@@ -1,0 +1,8 @@
+query GetIngestToken($id: ObjectId!) {
+  ingestToken(id: $id) {
+    id
+    name
+    description
+    disabled
+  }
+}

@@ -1,0 +1,6 @@
+mutation DeleteAuthtoken($id: String!) {
+  deleteAuthtoken(id: $id) {
+    success
+    errorMessage
+  }
+}

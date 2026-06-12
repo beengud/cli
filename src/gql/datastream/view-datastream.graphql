@@ -1,0 +1,33 @@
+query GetDatastream($id: ObjectId!) {
+  datastream(id: $id) {
+    id
+    name
+    description
+    disabled
+    directWrite {
+      prometheus {
+        datasetId
+      }
+      otelLogs {
+        datasetId
+      }
+      otelMetrics {
+        datasetId
+      }
+      k8sEntity {
+        datasetId
+      }
+      otelTrace {
+        spanDatasetId
+        spanEventDatasetId
+        spanLinkDatasetId
+      }
+    }
+    stats {
+      firstIngest
+      lastIngest
+      totalObservations
+      totalVolumeBytes
+    }
+  }
+}

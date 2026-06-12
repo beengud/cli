@@ -1,0 +1,27 @@
+query ListDatastreams {
+  datastreams {
+    id
+    name
+    description
+    disabled
+    directWrite {
+      prometheus {
+        datasetId
+      }
+      otelLogs {
+        datasetId
+      }
+      otelMetrics {
+        datasetId
+      }
+      k8sEntity {
+        datasetId
+      }
+      otelTrace {
+        spanDatasetId
+        spanEventDatasetId
+        spanLinkDatasetId
+      }
+    }
+  }
+}

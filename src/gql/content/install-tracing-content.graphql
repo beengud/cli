@@ -1,0 +1,9 @@
+mutation InstallTracingContent($input: TracingContentInput) {
+  installTracingContent(input: $input) {
+    traceDatasetId
+    spanRawDatasetId
+    spanEventDatasetId
+    spanLinkDatasetId
+    otelMetricsDatasetId
+  }
+}

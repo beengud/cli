@@ -1,0 +1,13 @@
+generatorName: typescript-fetch
+outputDir: ./src/rest/generated
+openapiNormalizer:
+  REMOVE_X_INTERNAL: true
+inlineSchemaOptions:
+  RESOLVE_INLINE_ENUMS: true
+additionalProperties:
+  supportsES6: true
+  stringEnums: true
+  nullSafeAdditionalProps: true
+  disallowAdditionalProperties: true
+  prefixParameterInterfaces: true
+  withoutRuntimeChecks: true

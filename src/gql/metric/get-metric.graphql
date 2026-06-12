@@ -1,0 +1,47 @@
+query GetMetric(
+  $match: String!
+  $inDatasets: [ObjectId!]
+  $heuristicsOptions: MetricHeuristicsOptions
+) {
+  metricSearch(
+    match: $match
+    inDatasets: $inDatasets
+    heuristicsOptions: $heuristicsOptions
+  ) {
+    matches {
+      datasetId
+      metric {
+        name
+        nameWithPath
+        description
+        type
+        unit
+        state
+        aggregate
+        rollup
+        interval
+        userDefined
+        suggestedBucketSize
+        heuristics {
+          cardinality
+          interval
+          intervalStddev
+          lastReported
+          numOfPoints
+          tags {
+            column
+            path
+          }
+          validLinkLabels
+        }
+      }
+    }
+    datasets {
+      id
+      name
+      description
+      kind
+    }
+    numSearched
+  }
+}

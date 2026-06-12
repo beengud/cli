@@ -1,0 +1,27 @@
+mutation UpdateDatastream($id: ObjectId!, $datastream: DatastreamInput!) {
+  updateDatastream(id: $id, datastream: $datastream) {
+    id
+    name
+    description
+    disabled
+    directWrite {
+      prometheus {
+        datasetId
+      }
+      otelLogs {
+        datasetId
+      }
+      otelMetrics {
+        datasetId
+      }
+      k8sEntity {
+        datasetId
+      }
+      otelTrace {
+        spanDatasetId
+        spanEventDatasetId
+        spanLinkDatasetId
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+import { buildCommand } from "@stricli/core";
+import type { LocalContext } from "../../context";
+import { viewDatastream } from "../../gql/datastream/view-datastream";
+import { GqlApiError } from "../../gql/gql-request";
+import { loadConfig } from "../../lib/config";
+
+export interface ViewDatastreamDeps {
+  loadConfig?: typeof loadConfig;
+}
+
+export async function view(
+  this: LocalContext,
+  _flags: Record<string, never>,
+  id: string,
+  deps: ViewDatastreamDeps = {},
+): Promise<void> {
+  const { loadConfig: loadConfigImpl = loadConfig } = deps;
+  const { process, writer } = this;
+
+  try {
+    const config = loadConfigImpl();
+    const result = await viewDatastream(config, { id });
+    writer.write(JSON.stringify(result, null, 2));
+  } catch (error) {
+    if (error instanceof GqlApiError) {
+      writer.error(`API Error (${error.statusCode}): ${error.message}`);
+    } else {
+      const message = error instanceof Error ? error.message : String(error);
+      writer.error(`Error: ${message}`);
+    }
+    process.exit(1);
+  }
+}
+
+export const viewCommand = buildCommand({
+  loader: async () => view,
+  parameters: {
+    positional: {
+      kind: "tuple",
+      parameters: [
+        {
+          brief: "Datastream ID",
+          parse: String,
+        },
+      ],
+    },
+    flags: {},
+  },
+  docs: {
+    brief: "View a datastream by ID",
+  },
+});

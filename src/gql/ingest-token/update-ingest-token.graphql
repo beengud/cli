@@ -1,0 +1,8 @@
+mutation UpdateIngestToken($id: ObjectId!, $input: IngestTokenInput!) {
+  updateIngestToken(id: $id, input: $input) {
+    id
+    name
+    description
+    disabled
+  }
+}

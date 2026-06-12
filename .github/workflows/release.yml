@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 1.0.0)"
+        required: true
+
+# Default: read-only. Escalate `actions: write` only on jobs that upload artifacts;
+# `contents: write` only on the job that creates the GitHub Release.
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - name: Extract version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build all targets
+        run: bun run build
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_BUILD: "1"
+          OBSERVE_OPENAPI_SPEC: ${{ secrets.OBSERVE_OPENAPI_SPEC }}
+          OBSERVE_GQL_TOKEN: ${{ secrets.OBSERVE_GQL_TOKEN }}
+          OBSERVE_GQL_SPEC: ${{ secrets.OBSERVE_GQL_SPEC }}
+          OBSERVE_INGEST_TOKEN: ${{ secrets.OBSERVE_INGEST_TOKEN }}
+          OBSERVE_COLLECT_URL: ${{ secrets.OBSERVE_COLLECT_URL }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-other
+          path: |
+            dist-bin/*.gz
+            !dist-bin/observe-darwin-*.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-darwin-unsigned
+          path: |
+            dist-bin/observe-darwin-arm64
+            dist-bin/observe-darwin-x64
+
+  sign-macos:
+    needs: build
+    runs-on: macos-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: binaries-darwin-unsigned
+          path: dist-bin
+
+      - name: Ad-hoc sign Darwin binaries
+        run: |
+          for f in dist-bin/observe-darwin-*; do
+            codesign --remove-signature "$f"
+            codesign -s - "$f"
+            codesign -dvv "$f"
+          done
+
+      - name: Compress signed binaries
+        run: gzip -k dist-bin/observe-darwin-*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-darwin
+          path: dist-bin/*.gz
+
+  release:
+    needs: [build, sign-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    steps:
+      - name: Extract tag
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=v${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist-bin
+          merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          cd dist-bin
+          sha256sum *.gz > "observe_${TAG#v}_checksums.txt"
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "$TAG" dist-bin/*.gz dist-bin/observe_*_checksums.txt \
+            --repo "${{ github.repository }}" \
+            --title "$TAG" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}

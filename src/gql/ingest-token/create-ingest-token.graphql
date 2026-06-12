@@ -1,0 +1,9 @@
+mutation CreateIngestToken($input: IngestTokenInput!) {
+  createIngestToken(input: $input) {
+    id
+    name
+    description
+    disabled
+    secret
+  }
+}

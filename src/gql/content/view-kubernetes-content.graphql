@@ -1,0 +1,8 @@
+query GetKubernetesContent {
+  getKubernetesContent {
+    otelLogsDatasetId
+    prometheusDatasetId
+    entityDatasetId
+    kubernetesLogsDatasetId
+  }
+}

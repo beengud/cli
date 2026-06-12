@@ -1,0 +1,27 @@
+mutation CreateDatastream($datastream: DatastreamInput!) {
+  createDatastream(datastream: $datastream) {
+    id
+    name
+    description
+    disabled
+    directWrite {
+      prometheus {
+        datasetId
+      }
+      otelLogs {
+        datasetId
+      }
+      otelMetrics {
+        datasetId
+      }
+      k8sEntity {
+        datasetId
+      }
+      otelTrace {
+        spanDatasetId
+        spanEventDatasetId
+        spanLinkDatasetId
+      }
+    }
+  }
+}

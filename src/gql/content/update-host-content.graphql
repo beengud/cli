@@ -1,0 +1,7 @@
+mutation UpdateHostContent($input: HostExplorerContentInput!) {
+  updateHostExplorerContent(input: $input) {
+    otelLogsDatasetId
+    prometheusDatasetId
+    hostExplorerLogsDatasetId
+  }
+}

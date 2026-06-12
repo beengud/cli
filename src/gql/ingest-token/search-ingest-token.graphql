@@ -1,0 +1,10 @@
+query SearchIngestToken {
+  searchIngestToken {
+    results {
+      id
+      name
+      description
+      disabled
+    }
+  }
+}

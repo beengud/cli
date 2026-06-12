@@ -1,0 +1,24 @@
+query DatasetQueryOutput($query: [StageInput!]!, $params: QueryParams!) {
+  datasetQueryOutput(query: $query, params: $params) {
+    queryId
+    stageId
+    paginatedResults
+    resultKind
+    resultSchema {
+      fieldList {
+        name
+        type {
+          tag
+        }
+        indexDesc {
+          column
+          type
+        }
+      }
+    }
+    errors {
+      message
+      text
+    }
+  }
+}

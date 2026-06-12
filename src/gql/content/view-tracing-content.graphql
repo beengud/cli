@@ -1,0 +1,9 @@
+query GetTracingContent {
+  tracingContent {
+    traceDatasetId
+    spanRawDatasetId
+    spanEventDatasetId
+    spanLinkDatasetId
+    otelMetricsDatasetId
+  }
+}
