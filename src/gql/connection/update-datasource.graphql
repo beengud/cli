@@ -1,0 +1,34 @@
+mutation UpdateDatasource($id: ObjectId!, $input: DatasourceInput!) {
+  updateDatasource(id: $id, input: $input) {
+    id
+    name
+    dataConnectionID
+    datastreamID
+    type
+    datastreamTokenID
+    variables {
+      name
+      value
+    }
+    clientStackAttributes {
+      name
+      value
+    }
+    config {
+      datasourceFiledropConfig {
+        dataAccessPointArn
+        destinationUri
+        filedrop {
+          id
+          datastreamTokenID
+        }
+      }
+      awsMetricsPollerConfig {
+        poller {
+          id
+          datastreamTokenId
+        }
+      }
+    }
+  }
+}

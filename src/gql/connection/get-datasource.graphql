@@ -1,0 +1,71 @@
+query GetDatasource($id: ObjectId!) {
+  datasource(id: $id) {
+    id
+    name
+    dataConnectionID
+    datastreamID
+    type
+    datastreamTokenID
+    variables {
+      name
+      value
+    }
+    clientStackAttributes {
+      name
+      value
+    }
+    config {
+      datasourceFiledropConfig {
+        dataAccessPointArn
+        destinationUri
+        filedrop {
+          id
+          datastreamTokenID
+        }
+      }
+      awsCollectionStackConfig {
+        awsServiceMetricsList {
+          namespace
+          metricNames
+        }
+        customMetricsList {
+          namespace
+          metricNames
+        }
+        configResourceList
+        configDeliveryBucketName
+        logGroupNamePatterns
+        excludeLogGroupNamePatterns
+        sourceBucketNames
+      }
+      awsMetricsPollerConfig {
+        poller {
+          id
+          datastreamTokenId
+          config {
+            ... on PollerCloudWatchMetricsConfig {
+              interval
+              queries {
+                namespace
+                metricNames
+                dimensions {
+                  name
+                  value
+                }
+                resourceFilter {
+                  resourceType
+                  pattern
+                  dimensionName
+                  tagFilters {
+                    key
+                    values
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
