@@ -36,7 +36,7 @@ export const CONFIG_FILES = {
 } as const;
 
 export const GITHUB_REPO = "observeinc/cli";
-export const GITHUB_RELEASES_LATEST_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+export const GITHUB_RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`;
 export const INSTALL_SCRIPT_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh`;
 
 export const TELEMETRY_TOKEN =
