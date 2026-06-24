@@ -74,6 +74,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe fleet status`                  | Current observe-agent inventory (newest first)          |
+| `observe fleet host`                    | Event history for one host, incl. agent start time      |
+| `observe fleet versions`                | Agent version distribution across the fleet             |
+| `observe fleet auth`                    | Agent auth-check status (failures first)                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
