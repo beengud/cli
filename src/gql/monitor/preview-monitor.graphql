@@ -1,0 +1,41 @@
+query PreviewMonitorV2(
+  $workspaceId: ObjectId
+  $input: MonitorV2Input!
+  $params: QueryParams!
+) {
+  previewMonitorV2(workspaceId: $workspaceId, input: $input, params: $params) {
+    stabilityBookmarkTime
+    alarms {
+      id
+      level
+      start
+      end
+      isActive
+      capturedValues {
+        types
+        value
+        column {
+          columnPath {
+            name
+            path
+          }
+          linkColumn {
+            name
+          }
+        }
+      }
+      context {
+        value
+        column {
+          columnPath {
+            name
+            path
+          }
+          linkColumn {
+            name
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+query GetMonitorV2($id: ObjectId!) {
+  monitorV2(id: $id) {
+    id
+    workspaceId
+    name
+    description
+    disabled
+    ruleKind
+    createdBy
+    createdDate
+    updatedDate
+    definition {
+      lookbackTime
+      dataStabilizationDelay
+      maxAlertsPerHour
+      inputQuery {
+        outputStage
+        stages {
+          id
+          pipeline
+        }
+      }
+      rules {
+        level
+        count {
+          compareValues {
+            compareFn
+            compareValue {
+              bool
+              float64
+              int64
+              string
+              timestamp
+              duration
+            }
+          }
+        }
+        threshold {
+          valueColumnName
+          aggregation
+          compareValues {
+            compareFn
+            compareValue {
+              bool
+              float64
+              int64
+              string
+              timestamp
+              duration
+            }
+          }
+        }
+        promote {
+          compareColumns {
+            column {
+              columnPath {
+                name
+                path
+              }
+              linkColumn {
+                name
+              }
+            }
+            compareValues {
+              compareFn
+            }
+          }
+        }
+        anomaly {
+          comparePercentage
+        }
+      }
+      groupings {
+        columnPath {
+          name
+          path
+        }
+        linkColumn {
+          name
+        }
+      }
+    }
+  }
+}

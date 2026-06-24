@@ -74,6 +74,11 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe monitor list`                  | List Monitor V2 resources                               |
+| `observe monitor get`                   | Get a Monitor V2 by ID (includes its definition)        |
+| `observe monitor preview-query`         | Compile a monitor input into its OPAL pipeline          |
+| `observe monitor preview`               | Preview whether a monitor would fire against recent data |
+| `observe monitor alarms`                | Search Monitor V2 alarms                                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
