@@ -98,6 +98,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe worksheet get`                 | Get a worksheet by ID (includes stages)                 |
 | `observe worksheet create`              | Create a worksheet from a JSON file                     |
 | `observe worksheet delete`              | Delete a worksheet by ID                                |
+| `observe fleet status`                  | Current observe-agent inventory (newest first)          |
+| `observe fleet host`                    | Event history for one host, incl. agent start time      |
+| `observe fleet versions`                | Agent version distribution across the fleet             |
+| `observe fleet auth`                    | Agent auth-check status (failures first)                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
