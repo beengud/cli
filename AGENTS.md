@@ -47,6 +47,7 @@ src/
 │   ├── metric/         # Metric commands (list, view)
 │   ├── schema/         # GraphQL schema commands (introspect)
 │   ├── opal/           # OPAL commands (check, verbs, functions, validate-ingest)
+│   ├── rbac/           # RBAC read access + DOT graph (group, statement, dot)
 │   ├── skill/          # AI agent skill commands (list, view)
 │   ├── tag-key/        # Tag key commands (list)
 │   ├── tag-value/      # Tag value commands (list)
@@ -63,6 +64,7 @@ src/
 │   ├── metric/         # Metric queries
 │   ├── schema/         # GraphQL introspection query
 │   ├── opal/           # OPAL validation/inspection queries
+│   ├── rbac/           # RBAC group/member/statement/user read queries
 │   ├── workspace/      # Workspace queries
 │   ├── gql-request.ts  # GraphQL client/executor
 │   └── gql-codegen.config.ts  # Codegen configuration

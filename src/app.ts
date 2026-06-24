@@ -16,6 +16,7 @@ import { metricRoutes } from "./commands/metric/index.js";
 import { opalRoutes } from "./commands/opal/index.js";
 import { queryCommand } from "./commands/query.js";
 import { schemaRoutes } from "./commands/schema/index.js";
+import { rbacRoutes } from "./commands/rbac/index.js";
 import { skillRoutes } from "./commands/skill/index.js";
 import { tagKeyRoutes } from "./commands/tag-key/index.js";
 import { tagValueRoutes } from "./commands/tag-value/index.js";
@@ -42,6 +43,7 @@ export const routes = buildRouteMap({
     schema: schemaRoutes,
     opal: opalRoutes,
     board: boardRoutes,
+    rbac: rbacRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",

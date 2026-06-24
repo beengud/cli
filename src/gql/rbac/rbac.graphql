@@ -1,0 +1,79 @@
+query ListRbacGroups {
+  rbacGroups {
+    id
+    name
+    description
+  }
+}
+
+query GetRbacGroup($id: ORN!) {
+  rbacGroup(id: $id) {
+    id
+    name
+    description
+  }
+}
+
+query ListRbacGroupmembers {
+  rbacGroupmembers {
+    id
+    description
+    groupId
+    memberUserId
+    memberGroupId
+  }
+}
+
+query GetRbacGroupmember($id: ORN!) {
+  rbacGroupmember(id: $id) {
+    id
+    description
+    groupId
+    memberUserId
+    memberGroupId
+  }
+}
+
+query ListRbacStatements {
+  rbacStatements {
+    id
+    description
+    subject {
+      userId
+      groupId
+      all
+    }
+    object {
+      objectId
+      folderId
+      workspaceId
+      type
+      name
+      owner
+      all
+    }
+    role
+  }
+}
+
+query ListRbacUsers {
+  currentCustomer {
+    users {
+      id
+      name: label
+      email
+      status
+      role
+    }
+  }
+}
+
+query GetRbacUser($id: UserId!) {
+  user(id: $id) {
+    id
+    name: label
+    email
+    status
+    role
+  }
+}
