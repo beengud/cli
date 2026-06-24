@@ -1,0 +1,67 @@
+mutation SaveBoard($input: DashboardInput!) {
+  saveDashboard(dash: $input) {
+    id
+    name
+    workspaceId
+    folderId
+    visibility
+  }
+}
+
+query GetBoard($id: ObjectId!) {
+  dashboard(id: $id) {
+    id
+    name
+    workspaceId
+    description
+    folderId
+    visibility
+    updatedDate
+    layout
+    stages {
+      id
+      pipeline
+      input {
+        inputName
+        datasetId
+        stageId
+        inputRole
+      }
+    }
+  }
+}
+
+query SearchBoards($terms: DWSearchInput!, $maxCount: Int64) {
+  dashboardSearch(terms: $terms, maxCount: $maxCount) {
+    dashboards {
+      score
+      dashboard {
+        id
+        name
+        workspaceId
+        updatedDate
+      }
+    }
+  }
+}
+
+mutation DeleteBoard($id: ObjectId!) {
+  deleteDashboard(id: $id) {
+    success
+    errorMessage
+  }
+}
+
+mutation SetDefaultDashboard($dsid: ObjectId!, $dashid: ObjectId!) {
+  setDefaultDashboard(dsid: $dsid, dashid: $dashid) {
+    success
+    errorMessage
+  }
+}
+
+mutation ClearDefaultDashboard($dsid: ObjectId!) {
+  clearDefaultDashboard(dsid: $dsid) {
+    success
+    errorMessage
+  }
+}

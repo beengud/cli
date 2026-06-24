@@ -35,6 +35,7 @@ src/
 ├── commands/           # CLI commands organized by resource
 │   ├── alert/          # Alert commands (list, view)
 │   ├── auth/           # Auth commands (configure, login, logout, status)
+│   ├── board/          # Board/dashboard commands (create, update, scaffold, set-default, clear-default, list, get, delete)
 │   ├── cli/            # CLI management (install, uninstall, upgrade)
 │   ├── content/        # Content pack management
 │   │   ├── host/       # Host Explorer (install, view)
@@ -52,6 +53,7 @@ src/
 ├── gql/                # GraphQL layer
 │   ├── generated/      # Auto-generated types (DO NOT EDIT)
 │   ├── authtoken/      # Auth token mutations
+│   ├── board/          # Board/dashboard queries/mutations
 │   ├── content/        # Content pack queries/mutations
 │   ├── dataset/        # Dataset queries
 │   ├── datastream/     # Datastream queries/mutations
