@@ -46,6 +46,8 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe tag-key list`                  | Search tag keys in the knowledge graph                  |
 | `observe dataset list`                  | List datasets with optional filtering                   |
 | `observe dataset view`                  | View dataset details and schema                         |
+| `observe dataset dry-run`               | Dry-run saving a dataset pipeline (nothing persisted)   |
+| `observe dataset impact`                | Show downstream datasets affected by a pipeline save    |
 | `observe metric list`                   | Search and list metrics                                 |
 | `observe metric view`                   | View metric details and dimensions                      |
 | `observe query`                         | Execute OPAL queries on datasets                        |
