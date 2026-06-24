@@ -5,6 +5,7 @@ import { dataConnectionRoutes } from "./commands/data-connection/index.js";
 import { datasourceRoutes } from "./commands/datasource/index.js";
 import { datastreamTokenRoutes } from "./commands/datastream-token/index.js";
 import { authRoutes } from "./commands/auth/index.js";
+import { boardRoutes } from "./commands/board/index.js";
 import { cliRoutes } from "./commands/cli/index.js";
 import { contentRoutes } from "./commands/content/index.js";
 import { datasetRoutes } from "./commands/dataset/index.js";
@@ -36,6 +37,7 @@ export const routes = buildRouteMap({
     "data-connection": dataConnectionRoutes,
     datastream: datastreamRoutes,
     "datastream-token": datastreamTokenRoutes,
+    board: boardRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",
