@@ -42,6 +42,7 @@ src/
 │   │   └── tracing/    # Trace Explorer (install, view)
 │   ├── dataset/        # Dataset commands (list, view)
 │   ├── datastream/     # Datastream commands (create, list, view, update)
+│   ├── fleet/          # observe-agent fleet commands (status, host, versions, auth)
 │   ├── ingest-token/   # Ingest token commands (create, list, view, update)
 │   ├── metric/         # Metric commands (list, view)
 │   ├── skill/          # AI agent skill commands (list, view)

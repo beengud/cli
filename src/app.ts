@@ -9,6 +9,7 @@ import { cliRoutes } from "./commands/cli/index.js";
 import { contentRoutes } from "./commands/content/index.js";
 import { datasetRoutes } from "./commands/dataset/index.js";
 import { datastreamRoutes } from "./commands/datastream/index.js";
+import { fleetRoutes } from "./commands/fleet/index.js";
 import { helpCommand } from "./commands/help.js";
 import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 import { metricRoutes } from "./commands/metric/index.js";
@@ -36,6 +37,7 @@ export const routes = buildRouteMap({
     "data-connection": dataConnectionRoutes,
     datastream: datastreamRoutes,
     "datastream-token": datastreamTokenRoutes,
+    fleet: fleetRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",
