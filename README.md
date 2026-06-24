@@ -14,6 +14,7 @@ Command line interface for [Observe Inc](https://www.observeinc.com).
 - **Ingest Token Management** - Full CRUD for ingest tokens with datastream association.
 - **Data Integrations** - Create data connections and datasources (AWS, Kubernetes, host) and generate CloudFormation quick-create URLs for AWS filedrop deployments.
 - **Datastream Management** - Create, list, view, and update datastreams.
+- **Board (Dashboard) Management** - Create, update, scaffold, list, get, delete, and set/clear default boards (dashboards).
 - **Multiple Output Formats** - All commands support `--format json` and `--format csv` for scripting and pipelines.
 - **Responsive Tables** - Terminal-aware column widths with automatic text wrapping.
 
@@ -79,6 +80,14 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe opal verbs`                    | List all OPAL verbs                                     |
 | `observe opal functions`                | List all OPAL functions                                 |
 | `observe opal validate-ingest`          | Validate an OPAL ingest filter expression               |
+| `observe board create`                  | Create a board (dashboard) from a JSON file             |
+| `observe board update`                  | Update a board (dashboard) from a JSON file             |
+| `observe board scaffold`                | Print a starting board (dashboard) JSON template        |
+| `observe board set-default`             | Set the default board (dashboard) for a dataset         |
+| `observe board clear-default`           | Clear the default board (dashboard) for a dataset       |
+| `observe board list`                    | List boards (dashboards)                                |
+| `observe board get`                     | Get a board (dashboard) by ID                           |
+| `observe board delete`                  | Delete a board (dashboard) by ID                        |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
