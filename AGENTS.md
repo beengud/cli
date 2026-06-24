@@ -41,7 +41,7 @@ src/
 │   │   ├── host/       # Host Explorer (install, view)
 │   │   ├── kubernetes/ # Kubernetes Explorer (install, view)
 │   │   └── tracing/    # Trace Explorer (install, view)
-│   ├── dataset/        # Dataset commands (list, view)
+│   ├── dataset/        # Dataset commands (list, view, dry-run, impact)
 │   ├── datastream/     # Datastream commands (create, list, view, update)
 │   ├── ingest-token/   # Ingest token commands (create, list, view, update)
 │   ├── metric/         # Metric commands (list, view)
