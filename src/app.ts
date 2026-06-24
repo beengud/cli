@@ -13,6 +13,7 @@ import { helpCommand } from "./commands/help.js";
 import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 import { metricRoutes } from "./commands/metric/index.js";
 import { queryCommand } from "./commands/query.js";
+import { schemaRoutes } from "./commands/schema/index.js";
 import { skillRoutes } from "./commands/skill/index.js";
 import { tagKeyRoutes } from "./commands/tag-key/index.js";
 import { tagValueRoutes } from "./commands/tag-value/index.js";
@@ -36,6 +37,7 @@ export const routes = buildRouteMap({
     "data-connection": dataConnectionRoutes,
     datastream: datastreamRoutes,
     "datastream-token": datastreamTokenRoutes,
+    schema: schemaRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",
