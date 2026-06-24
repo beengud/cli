@@ -51,6 +51,7 @@ src/
 │   ├── skill/          # AI agent skill commands (list, view)
 │   ├── tag-key/        # Tag key commands (list)
 │   ├── tag-value/      # Tag value commands (list)
+│   ├── worksheet/      # Worksheet commands (list, get, create, delete)
 │   ├── query.ts        # OPAL query execution
 │   └── help.ts         # Help command
 ├── gql/                # GraphQL layer
@@ -66,6 +67,7 @@ src/
 │   ├── opal/           # OPAL validation/inspection queries
 │   ├── rbac/           # RBAC group/member/statement/user read queries
 │   ├── workspace/      # Workspace queries
+│   ├── worksheet/      # Worksheet queries/mutations
 │   ├── gql-request.ts  # GraphQL client/executor
 │   └── gql-codegen.config.ts  # Codegen configuration
 ├── rest/               # REST API layer

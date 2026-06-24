@@ -20,6 +20,7 @@ import { rbacRoutes } from "./commands/rbac/index.js";
 import { skillRoutes } from "./commands/skill/index.js";
 import { tagKeyRoutes } from "./commands/tag-key/index.js";
 import { tagValueRoutes } from "./commands/tag-value/index.js";
+import { worksheetRoutes } from "./commands/worksheet/index.js";
 import { CURRENT_CLI_VERSION } from "./lib/constants.js";
 
 /** Top-level route map containing all CLI commands */
@@ -44,6 +45,7 @@ export const routes = buildRouteMap({
     opal: opalRoutes,
     board: boardRoutes,
     rbac: rbacRoutes,
+    worksheet: worksheetRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",

@@ -92,6 +92,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe rbac group get`                | Get an RBAC group by ID (optionally with members)       |
 | `observe rbac statement list`           | List RBAC statements                                    |
 | `observe rbac dot`                      | Output a GraphViz DOT graph of RBAC relationships       |
+| `observe worksheet list`                | List worksheets                                         |
+| `observe worksheet get`                 | Get a worksheet by ID (includes stages)                 |
+| `observe worksheet create`              | Create a worksheet from a JSON file                     |
+| `observe worksheet delete`              | Delete a worksheet by ID                                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
