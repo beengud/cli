@@ -44,6 +44,7 @@ src/
 │   ├── datastream/     # Datastream commands (create, list, view, update)
 │   ├── ingest-token/   # Ingest token commands (create, list, view, update)
 │   ├── metric/         # Metric commands (list, view)
+│   ├── opal/           # OPAL commands (check, verbs, functions, validate-ingest)
 │   ├── skill/          # AI agent skill commands (list, view)
 │   ├── tag-key/        # Tag key commands (list)
 │   ├── tag-value/      # Tag value commands (list)
@@ -57,6 +58,7 @@ src/
 │   ├── datastream/     # Datastream queries/mutations
 │   ├── ingest-token/   # Ingest token queries/mutations
 │   ├── metric/         # Metric queries
+│   ├── opal/           # OPAL validation/inspection queries
 │   ├── workspace/      # Workspace queries
 │   ├── gql-request.ts  # GraphQL client/executor
 │   └── gql-codegen.config.ts  # Codegen configuration

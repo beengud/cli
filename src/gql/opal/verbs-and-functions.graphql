@@ -1,0 +1,15 @@
+query VerbsAndFunctions {
+  verbsAndFunctions {
+    verbs {
+      name
+      description
+      categories
+    }
+    functions {
+      name
+      description
+      categories
+      returnType
+    }
+  }
+}

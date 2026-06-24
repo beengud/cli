@@ -1,0 +1,8 @@
+query ValidateIngestFilter($pipeline: String!, $sourceDatasetID: ObjectId!) {
+  validateIngestFilterExpression(
+    pipeline: $pipeline
+    sourceDatasetID: $sourceDatasetID
+  ) {
+    message
+  }
+}

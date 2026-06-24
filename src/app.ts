@@ -12,6 +12,7 @@ import { datastreamRoutes } from "./commands/datastream/index.js";
 import { helpCommand } from "./commands/help.js";
 import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 import { metricRoutes } from "./commands/metric/index.js";
+import { opalRoutes } from "./commands/opal/index.js";
 import { queryCommand } from "./commands/query.js";
 import { skillRoutes } from "./commands/skill/index.js";
 import { tagKeyRoutes } from "./commands/tag-key/index.js";
@@ -36,6 +37,7 @@ export const routes = buildRouteMap({
     "data-connection": dataConnectionRoutes,
     datastream: datastreamRoutes,
     "datastream-token": datastreamTokenRoutes,
+    opal: opalRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",

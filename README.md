@@ -74,6 +74,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe opal check`                    | Validate an OPAL pipeline                               |
+| `observe opal verbs`                    | List all OPAL verbs                                     |
+| `observe opal functions`                | List all OPAL functions                                 |
+| `observe opal validate-ingest`          | Validate an OPAL ingest filter expression               |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
