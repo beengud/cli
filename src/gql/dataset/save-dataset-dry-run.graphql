@@ -1,0 +1,28 @@
+mutation SaveDatasetDryRun(
+  $workspaceId: ObjectId!
+  $dataset: DatasetInput!
+  $query: MultiStageQueryInput!
+) {
+  saveDataset(
+    workspaceId: $workspaceId
+    dataset: $dataset
+    query: $query
+    dependencyHandling: { saveMode: PreflightDatasetAndDependencies }
+  ) {
+    dataset {
+      id
+      name
+    }
+    dematerializedDatasets {
+      dataset {
+        id
+        name
+      }
+    }
+    errorDatasets {
+      datasetId
+      datasetName
+      text
+    }
+  }
+}
