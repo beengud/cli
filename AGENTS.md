@@ -44,6 +44,7 @@ src/
 │   ├── datastream/     # Datastream commands (create, list, view, update)
 │   ├── ingest-token/   # Ingest token commands (create, list, view, update)
 │   ├── metric/         # Metric commands (list, view)
+│   ├── monitor/        # Monitor V2 commands (list, get, preview-query, preview, alarms)
 │   ├── skill/          # AI agent skill commands (list, view)
 │   ├── tag-key/        # Tag key commands (list)
 │   ├── tag-value/      # Tag value commands (list)
@@ -57,6 +58,7 @@ src/
 │   ├── datastream/     # Datastream queries/mutations
 │   ├── ingest-token/   # Ingest token queries/mutations
 │   ├── metric/         # Metric queries
+│   ├── monitor/        # Monitor V2 queries
 │   ├── workspace/      # Workspace queries
 │   ├── gql-request.ts  # GraphQL client/executor
 │   └── gql-codegen.config.ts  # Codegen configuration
