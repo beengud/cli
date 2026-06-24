@@ -1,0 +1,7 @@
+mutation SaveWorksheet($wks: WorksheetInput!) {
+  saveWorksheet(wks: $wks) {
+    id
+    name
+    workspaceId
+  }
+}

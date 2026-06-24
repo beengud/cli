@@ -1,0 +1,12 @@
+query GetWorksheet($id: ObjectId!) {
+  worksheet(id: $id) {
+    id
+    name
+    workspaceId
+    updatedDate
+    stages {
+      id
+      pipeline
+    }
+  }
+}

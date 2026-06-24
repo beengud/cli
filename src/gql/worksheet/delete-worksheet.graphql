@@ -1,0 +1,6 @@
+mutation DeleteWorksheet($id: ObjectId!) {
+  deleteWorksheet(wks: $id) {
+    success
+    errorMessage
+  }
+}

@@ -1,0 +1,12 @@
+query ListWorksheets($terms: DWSearchInput!) {
+  worksheetSearch(terms: $terms) {
+    worksheets {
+      worksheet {
+        id
+        name
+        workspaceId
+        updatedDate
+      }
+    }
+  }
+}

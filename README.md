@@ -74,6 +74,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe worksheet list`                | List worksheets                                         |
+| `observe worksheet get`                 | Get a worksheet by ID (includes stages)                 |
+| `observe worksheet create`              | Create a worksheet from a JSON file                     |
+| `observe worksheet delete`              | Delete a worksheet by ID                                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
