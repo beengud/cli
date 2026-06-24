@@ -74,6 +74,10 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe rbac group list`               | List RBAC groups                                        |
+| `observe rbac group get`                | Get an RBAC group by ID (optionally with members)       |
+| `observe rbac statement list`           | List RBAC statements                                    |
+| `observe rbac dot`                      | Output a GraphViz DOT graph of RBAC relationships       |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
