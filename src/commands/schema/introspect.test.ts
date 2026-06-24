@@ -67,7 +67,7 @@ let previousForceColor: string | undefined;
 
 const deps = {
   loadConfig: loadConfigFn,
-} as Parameters<(typeof import("./introspect"))["introspect"]>[2];
+} as Parameters<(typeof import("./introspect"))["introspect"]>[1];
 
 beforeAll(async () => {
   previousNoColor = process.env.NO_COLOR;
