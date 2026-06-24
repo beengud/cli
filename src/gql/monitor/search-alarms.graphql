@@ -1,0 +1,29 @@
+query SearchMonitorV2Alarms(
+  $workspaceId: ObjectId
+  $monitorIds: [ObjectId!]
+  $minTime: Time
+  $maxTime: Time
+  $levels: [MonitorV2AlarmLevel!]
+) {
+  searchMonitorV2Alarms(
+    workspaceId: $workspaceId
+    monitorIds: $monitorIds
+    minTime: $minTime
+    maxTime: $maxTime
+    levels: $levels
+  ) {
+    results {
+      id
+      level
+      isActive
+      start
+      end
+      detectedStart
+      detectedEnd
+      monitor {
+        id
+        name
+      }
+    }
+  }
+}

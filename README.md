@@ -102,6 +102,11 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe fleet host`                    | Event history for one host, incl. agent start time      |
 | `observe fleet versions`                | Agent version distribution across the fleet             |
 | `observe fleet auth`                    | Agent auth-check status (failures first)                |
+| `observe monitor list`                  | List Monitor V2 resources                               |
+| `observe monitor get`                   | Get a Monitor V2 by ID (includes its definition)        |
+| `observe monitor preview-query`         | Compile a monitor input into its OPAL pipeline          |
+| `observe monitor preview`               | Preview whether a monitor would fire against recent data |
+| `observe monitor alarms`                | Search Monitor V2 alarms                                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |

@@ -1,0 +1,11 @@
+query SearchMonitorV2($workspaceId: ObjectId, $nameSubstring: String) {
+  searchMonitorV2(workspaceId: $workspaceId, nameSubstring: $nameSubstring) {
+    results {
+      id
+      name
+      description
+      disabled
+      updatedDate
+    }
+  }
+}

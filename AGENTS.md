@@ -49,6 +49,7 @@ src/
 │   ├── schema/         # GraphQL schema commands (introspect)
 │   ├── opal/           # OPAL commands (check, verbs, functions, validate-ingest)
 │   ├── rbac/           # RBAC read access + DOT graph (group, statement, dot)
+│   ├── monitor/        # Monitor V2 commands (list, get, preview-query, preview, alarms)
 │   ├── skill/          # AI agent skill commands (list, view)
 │   ├── tag-key/        # Tag key commands (list)
 │   ├── tag-value/      # Tag value commands (list)
@@ -67,6 +68,7 @@ src/
 │   ├── schema/         # GraphQL introspection query
 │   ├── opal/           # OPAL validation/inspection queries
 │   ├── rbac/           # RBAC group/member/statement/user read queries
+│   ├── monitor/        # Monitor V2 queries
 │   ├── workspace/      # Workspace queries
 │   ├── worksheet/      # Worksheet queries/mutations
 │   ├── gql-request.ts  # GraphQL client/executor

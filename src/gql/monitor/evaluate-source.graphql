@@ -1,0 +1,11 @@
+query EvaluateMonitorV2Source($input: MonitorV2Input!) {
+  evaluateMonitorV2Source(input: $input) {
+    query {
+      outputStage
+      stages {
+        id
+        pipeline
+      }
+    }
+  }
+}
