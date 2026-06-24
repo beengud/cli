@@ -1,0 +1,23 @@
+query CheckQueries($queries: MultiStageQueryInput!) {
+  checkQueries(queries: $queries) {
+    parsedPipeline {
+      errors {
+        col
+        row
+        text
+      }
+      warnings {
+        kind
+        symbol {
+          col
+          row
+        }
+      }
+    }
+    resultSchema {
+      fieldList {
+        name
+      }
+    }
+  }
+}
