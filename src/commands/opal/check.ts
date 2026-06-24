@@ -57,7 +57,7 @@ export async function check(
         outputStage: "stage-1",
         stages: [
           {
-            stageID: "stage-1",
+            id: "stage-1",
             pipeline,
             input: [],
           },

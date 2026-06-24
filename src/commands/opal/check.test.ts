@@ -112,7 +112,7 @@ describe("opal check", () => {
     expect(variables).toEqual({
       queries: {
         outputStage: "stage-1",
-        stages: [{ stageID: "stage-1", pipeline: "filter true", input: [] }],
+        stages: [{ id: "stage-1", pipeline: "filter true", input: [] }],
       },
     });
     const out = stdout.join("");
