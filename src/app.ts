@@ -12,6 +12,7 @@ import { datastreamRoutes } from "./commands/datastream/index.js";
 import { helpCommand } from "./commands/help.js";
 import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 import { metricRoutes } from "./commands/metric/index.js";
+import { monitorRoutes } from "./commands/monitor/index.js";
 import { queryCommand } from "./commands/query.js";
 import { skillRoutes } from "./commands/skill/index.js";
 import { tagKeyRoutes } from "./commands/tag-key/index.js";
@@ -31,6 +32,7 @@ export const routes = defineRoutes({
     query: queryCommand,
     skill: skillRoutes,
     alert: alertRoutes,
+    monitor: monitorRoutes,
     content: contentRoutes,
     "ingest-token": ingestTokenRoutes,
     datasource: datasourceRoutes,
