@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import { verbsAndFunctions } from "../../gql/opal/verbs-and-functions";
 import { GqlApiError } from "../../gql/gql-request";
@@ -27,7 +27,7 @@ async function verbs(this: LocalContext): Promise<void> {
   }
 }
 
-export const verbsCommand = buildCommand({
+export const verbsCommand = defineCommand({
   loader: async () => verbs,
   parameters: { positional: { kind: "tuple", parameters: [] }, flags: {} },
   docs: {

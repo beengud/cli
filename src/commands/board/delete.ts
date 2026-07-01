@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import { deleteBoard } from "../../gql/board/delete-board";
 import { GqlApiError } from "../../gql/gql-request";
@@ -36,7 +36,7 @@ async function del(
   }
 }
 
-export const deleteCommand = buildCommand({
+export const deleteCommand = defineCommand({
   loader: async () => del,
   parameters: {
     positional: {

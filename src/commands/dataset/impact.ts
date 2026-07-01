@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import chalk from "chalk";
 import * as fs from "node:fs";
 import type { LocalContext } from "../../context";
@@ -89,7 +89,7 @@ async function impact(
   }
 }
 
-export const impactCommand = buildCommand({
+export const impactCommand = defineCommand({
   loader: async () => impact,
   parameters: {
     positional: {

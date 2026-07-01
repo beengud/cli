@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import {
   createFolder,
@@ -69,7 +69,7 @@ async function create(
   }
 }
 
-export const createCommand = buildCommand({
+export const createCommand = defineCommand({
   loader: async () => create,
   parameters: {
     positional: {

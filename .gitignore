@@ -26,6 +26,8 @@ jspm_packages/
 *.tsbuildinfo
 dist
 dist-bin
+# Bun bundler temp artifacts (created during `bun run build`)
+*.bun-build
 
 generated
 # Keep committed snapshots of the generated GraphQL/REST artifacts so the

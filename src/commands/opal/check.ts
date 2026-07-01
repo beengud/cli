@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import * as fs from "node:fs";
 import type { LocalContext } from "../../context";
 import { checkQueries } from "../../gql/opal/check-queries";
@@ -83,7 +83,7 @@ async function check(
   }
 }
 
-export const checkCommand = buildCommand({
+export const checkCommand = defineCommand({
   loader: async () => check,
   parameters: {
     positional: {

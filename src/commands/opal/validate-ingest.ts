@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import { validateIngestFilter } from "../../gql/opal/validate-ingest-filter";
 import { GqlApiError } from "../../gql/gql-request";
@@ -47,7 +47,7 @@ async function validateIngest(
   }
 }
 
-export const validateIngestCommand = buildCommand({
+export const validateIngestCommand = defineCommand({
   loader: async () => validateIngest,
   parameters: {
     positional: {

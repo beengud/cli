@@ -1,4 +1,4 @@
-import { buildRouteMap } from "@stricli/core";
+import { defineRoutes } from "../../lib/stricli-wrappers";
 import { createCommand } from "./create";
 import { updateCommand } from "./update";
 import { getCommand } from "./get";
@@ -7,7 +7,7 @@ import { deleteCommand } from "./delete";
 import { scaffoldCommand } from "./scaffold";
 import { clearDefaultCommand, setDefaultCommand } from "./set-default";
 
-export const boardRoutes = buildRouteMap({
+export const boardRoutes = defineRoutes({
   routes: {
     create: createCommand,
     update: updateCommand,

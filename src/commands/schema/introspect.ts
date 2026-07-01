@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import { introspectSchema } from "../../gql/schema/introspect";
 import { GqlApiError } from "../../gql/gql-request";
@@ -43,7 +43,7 @@ async function introspect(
   }
 }
 
-export const introspectCommand = buildCommand({
+export const introspectCommand = defineCommand({
   loader: async () => introspect,
   parameters: {
     positional: { kind: "tuple", parameters: [] },

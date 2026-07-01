@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 
 // Mirrors boardScaffoldTemplate in the Go fork (cmd_board.go). Prints a minimal
@@ -72,7 +72,7 @@ async function scaffold(
   writer.write(JSON.stringify(template, null, 2));
 }
 
-export const scaffoldCommand = buildCommand({
+export const scaffoldCommand = defineCommand({
   loader: async () => scaffold,
   parameters: {
     positional: {
