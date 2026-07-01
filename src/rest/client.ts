@@ -1,10 +1,11 @@
 import {
-  SkillsApi,
+  // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+  // SkillsApi,
   AlertApi,
   Configuration,
   DatasetApi,
   ExportApi,
-  V2KnowledgeGraphApi,
+  // V2KnowledgeGraphApi,
 } from "./generated";
 import { getApiBaseUrl, type Config } from "../lib/config";
 import { observeApiHeaders } from "../lib/user-agent";
@@ -21,8 +22,9 @@ export class ObserveRestSDK {
   public exportApi: ExportApi;
   public datasetApi: DatasetApi;
   public alertApi: AlertApi;
-  public knowledgeGraphApi: V2KnowledgeGraphApi;
-  public skillsApi: SkillsApi;
+  // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+  // public knowledgeGraphApi: V2KnowledgeGraphApi;
+  // public skillsApi: SkillsApi;
 
   constructor(_config: Config) {
     const config = createConfiguration(_config);
@@ -30,7 +32,8 @@ export class ObserveRestSDK {
     this.exportApi = new ExportApi(config);
     this.datasetApi = new DatasetApi(config);
     this.alertApi = new AlertApi(config);
-    this.knowledgeGraphApi = new V2KnowledgeGraphApi(config);
-    this.skillsApi = new SkillsApi(config);
+    // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+    // this.knowledgeGraphApi = new V2KnowledgeGraphApi(config);
+    // this.skillsApi = new SkillsApi(config);
   }
 }

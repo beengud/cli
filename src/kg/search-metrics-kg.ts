@@ -27,7 +27,9 @@ import {
   type RelatedEntities,
   type RelatedMetric,
 } from "../lib/kg-search";
-import { KGV2DocumentType } from "../rest/generated";
+// TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+// import { KGV2DocumentType } from "../rest/generated";
+const KGV2DocumentType = { Metric: "Metric" } as const;
 import { MetricState } from "../gql/generated/graphql";
 import type { GqlMetricMatch } from "../gql/metric/list-metrics";
 

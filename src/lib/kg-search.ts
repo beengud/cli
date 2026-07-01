@@ -6,9 +6,22 @@
  * ported here; the CLI does not need the semantic/regex search wrappers.
  */
 
-import { ObserveRestSDK } from "../rest/client";
-import { KGV2DocumentType } from "../rest/generated";
+// TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+// import { ObserveRestSDK } from "../rest/client";
+// import { KGV2DocumentType } from "../rest/generated";
 import type { Config } from "./config";
+
+// TEMP: the V2 Knowledge Graph REST surface (KGV2DocumentType, V2KnowledgeGraphApi)
+// is absent from this tenant's regenerable OpenAPI spec (introspection disabled),
+// so the KG-backed lookup helpers below are stubbed to throw. They are only reached
+// via dataset/metric list `--correlation-tag-key`, which mop does not use. Restore
+// the real implementations (preserved below in comments) when schema is available.
+type KGV2DocumentType = string;
+function kgUnavailable(): never {
+  throw new Error(
+    "Knowledge Graph lookup is unavailable in this build (Observe schema introspection disabled).",
+  );
+}
 
 /**
  * KG tag-value document ids strip surrounding quotes and replace dots with
@@ -97,6 +110,14 @@ export async function lookupTagValueRelatedEntities({
   key: string;
   value: string;
 }): Promise<RelatedEntities> {
+  // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+  void config;
+  void key;
+  void value;
+  void normalizeTagKey;
+  void extractRelatedEntities;
+  return kgUnavailable();
+  /* Original implementation, restore when KG schema available:
   const api = new ObserveRestSDK(config).knowledgeGraphApi;
   // Tag-value doc id format varies by KG indexer version. Some tenants
   // normalize dots to underscores (matches AI-SRE's kg-shared.ts), others
@@ -123,6 +144,7 @@ export async function lookupTagValueRelatedEntities({
     relatedDatasetIds: [],
     relatedMetricIds: [],
   };
+  */
 }
 
 /**
@@ -140,6 +162,12 @@ export async function fetchDocumentsByIds({
   ids: string[];
   documentType: KGV2DocumentType;
 }): Promise<unknown[]> {
+  // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
+  void config;
+  void ids;
+  void documentType;
+  return kgUnavailable();
+  /* Original implementation, restore when KG schema available:
   if (ids.length === 0) return [];
   const api = new ObserveRestSDK(config).knowledgeGraphApi;
   try {
@@ -151,4 +179,5 @@ export async function fetchDocumentsByIds({
   } catch {
     return [];
   }
+  */
 }
