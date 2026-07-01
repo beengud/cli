@@ -37,12 +37,16 @@ src/
 │   ├── auth/           # Auth commands (configure, login, logout, status)
 │   ├── board/          # Board (dashboard) commands (create, update, get, list, delete, scaffold, set-default, clear-default)
 │   ├── folder/         # Folder commands (create, get, update, delete)
+│   ├── opal/           # OPAL commands (check, verbs, functions, validate-ingest)
+│   ├── fleet/          # Fleet commands (status, host, versions, auth) — observe-agent status via REST export query
+│   ├── schema/         # Schema commands (introspect) — requires GraphQL introspection enabled
+│   ├── worksheet/      # Worksheet commands (list, get, create, delete)
 │   ├── cli/            # CLI management (install, uninstall, upgrade)
 │   ├── content/        # Content pack management (experimental: gated + hidden)
 │   │   ├── host/       # Host Explorer (install, view)
 │   │   ├── kubernetes/ # Kubernetes Explorer (install, view)
 │   │   └── tracing/    # Trace Explorer (install, view)
-│   ├── dataset/        # Dataset commands (list, view)
+│   ├── dataset/        # Dataset commands (list, view, dry-run, impact; dry-run/impact unverified — schema drifted)
 │   ├── datastream/     # Datastream commands (create, list, view, update)
 │   ├── ingest-token/   # Ingest token commands (experimental: gated + hidden)
 │   ├── metric/         # Metric commands (list, view)
@@ -56,8 +60,11 @@ src/
 │   ├── authtoken/      # Auth token mutations
 │   ├── board/          # Board (dashboard) queries/mutations (hand-authored; codegen unavailable)
 │   ├── folder/         # Folder queries/mutations (hand-authored; codegen unavailable)
+│   ├── opal/           # OPAL queries (check-queries, verbs-and-functions, validate-ingest-filter) — uses generated snapshot ops
+│   ├── schema/         # GraphQL introspection query (hand-authored)
+│   ├── worksheet/      # Worksheet queries/mutations (hand-authored; codegen unavailable)
 │   ├── content/        # Content pack queries/mutations
-│   ├── dataset/        # Dataset queries
+│   ├── dataset/        # Dataset queries (incl. dataset-analysis: dry-run/impact, hand-authored, unverified)
 │   ├── datastream/     # Datastream queries/mutations
 │   ├── ingest-token/   # Ingest token queries/mutations
 │   ├── metric/         # Metric queries
@@ -67,6 +74,7 @@ src/
 ├── rest/               # REST API layer
 │   ├── generated/      # Auto-generated client (DO NOT EDIT)
 │   ├── client.ts       # REST client factory
+│   ├── export/         # OPAL export query helper (runOpalQueryCsv) used by fleet
 │   └── config.yaml     # OpenAPI generator config
 └── lib/                # Shared utilities
     ├── auth/           # Auth flows (browser login, device code, server discovery)
