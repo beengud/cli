@@ -32,6 +32,13 @@ To update installed skills after edits in this repo, run `npx skills update`.
 
 ## Commands
 
+> Note: some commands listed below are temporarily disabled in this build. They
+> depend on generated GraphQL/REST types that cannot be regenerated while the
+> target tenant has GraphQL introspection disabled. They are commented out in
+> `src/app.ts` (search for "TEMP: trimmed pending full Observe schema access")
+> and will be restored once `bun codegen:gql` can run. The currently active
+> commands are: `help`, `dataset`, `alert`, `board`, `folder`, `cli`.
+
 | Command                                 | Description                                             |
 | --------------------------------------- | ------------------------------------------------------- |
 | `observe help`                          | Show help information                                   |
@@ -55,6 +62,18 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream view`               | View a datastream by ID                                 |
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
+| `observe board create`                  | Create a board (dashboard) from a JSON file             |
+| `observe board update`                  | Update an existing board from a JSON file               |
+| `observe board get`                     | Get a board by ID as JSON                               |
+| `observe board list`                    | List boards in a workspace                              |
+| `observe board delete`                  | Delete a board by ID                                    |
+| `observe board scaffold`                | Print a minimal board JSON template                     |
+| `observe board set-default`             | Set the default dashboard for a dataset                 |
+| `observe board clear-default`           | Clear the default dashboard for a dataset               |
+| `observe folder create`                 | Create a folder (use --ensure to make it idempotent)    |
+| `observe folder get`                    | Look up a folder by name and print its ID               |
+| `observe folder update`                 | Update a folder's name, description, or icon URL        |
+| `observe folder delete`                 | Delete a folder by ID                                   |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |

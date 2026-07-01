@@ -28,6 +28,11 @@ dist
 dist-bin
 
 generated
+# Keep committed snapshots of the generated GraphQL/REST artifacts so the
+# binary can build without live codegen (the tenant has GraphQL introspection
+# disabled, so `bun codegen:gql` cannot regenerate them).
+!src/gql/generated/
+!src/rest/generated/
 
 .env
 !.env.example
