@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import * as fs from "node:fs";
 import type { LocalContext } from "../../context";
 import { datasetDryRun } from "../../gql/dataset/dataset-analysis";
@@ -69,7 +69,7 @@ async function dryRun(
   }
 }
 
-export const dryRunCommand = buildCommand({
+export const dryRunCommand = defineCommand({
   loader: async () => dryRun,
   parameters: {
     positional: {

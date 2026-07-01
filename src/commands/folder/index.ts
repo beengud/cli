@@ -1,10 +1,10 @@
-import { buildRouteMap } from "@stricli/core";
+import { defineRoutes } from "../../lib/stricli-wrappers";
 import { createCommand } from "./create";
 import { getCommand } from "./get";
 import { updateCommand } from "./update";
 import { deleteCommand } from "./delete";
 
-export const folderRoutes = buildRouteMap({
+export const folderRoutes = defineRoutes({
   routes: {
     create: createCommand,
     get: getCommand,

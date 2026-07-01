@@ -1,4 +1,4 @@
-import { buildRouteMap } from "@stricli/core";
+import { defineRoutes } from "../../lib/stricli-wrappers";
 import {
   authCommand,
   hostCommand,
@@ -6,7 +6,7 @@ import {
   versionsCommand,
 } from "./fleet";
 
-export const fleetRoutes = buildRouteMap({
+export const fleetRoutes = defineRoutes({
   routes: {
     status: statusCommand,
     host: hostCommand,

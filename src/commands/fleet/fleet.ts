@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import { loadConfig } from "../../lib/config";
 import { formatApiError } from "../../lib/format-error";
@@ -82,7 +82,7 @@ const windowFlag = {
   },
 };
 
-export const statusCommand = buildCommand({
+export const statusCommand = defineCommand({
   loader: async () => {
     return async function (this: LocalContext, flags: FleetFlags) {
       await runFleet.call(this, flags, OPAL_FLEET_STATUS);
@@ -95,7 +95,7 @@ export const statusCommand = buildCommand({
   docs: { brief: "Show current status of all observe-agent instances" },
 });
 
-export const versionsCommand = buildCommand({
+export const versionsCommand = defineCommand({
   loader: async () => {
     return async function (this: LocalContext, flags: FleetFlags) {
       await runFleet.call(this, flags, OPAL_FLEET_VERSIONS);
@@ -108,7 +108,7 @@ export const versionsCommand = buildCommand({
   docs: { brief: "Show observe-agent versions across the fleet" },
 });
 
-export const authCommand = buildCommand({
+export const authCommand = defineCommand({
   loader: async () => {
     return async function (this: LocalContext, flags: FleetFlags) {
       await runFleet.call(this, flags, OPAL_FLEET_AUTH);
@@ -121,7 +121,7 @@ export const authCommand = buildCommand({
   docs: { brief: "Show observe-agent auth-check status across the fleet" },
 });
 
-export const hostCommand = buildCommand({
+export const hostCommand = defineCommand({
   loader: async () => {
     return async function (
       this: LocalContext,

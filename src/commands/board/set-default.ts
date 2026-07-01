@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import type { LocalContext } from "../../context";
 import {
   clearDefaultDashboard,
@@ -67,7 +67,7 @@ async function clearDefault(
   }
 }
 
-export const setDefaultCommand = buildCommand({
+export const setDefaultCommand = defineCommand({
   loader: async () => setDefault,
   parameters: {
     positional: {
@@ -84,7 +84,7 @@ export const setDefaultCommand = buildCommand({
   },
 });
 
-export const clearDefaultCommand = buildCommand({
+export const clearDefaultCommand = defineCommand({
   loader: async () => clearDefault,
   parameters: {
     positional: {

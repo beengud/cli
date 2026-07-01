@@ -1,7 +1,7 @@
-import { buildRouteMap } from "@stricli/core";
+import { defineRoutes } from "../../lib/stricli-wrappers";
 import { introspectCommand } from "./introspect";
 
-export const schemaRoutes = buildRouteMap({
+export const schemaRoutes = defineRoutes({
   routes: {
     introspect: introspectCommand,
   },

@@ -1,10 +1,10 @@
-import { buildRouteMap } from "@stricli/core";
+import { defineRoutes } from "../../lib/stricli-wrappers";
 import { checkCommand } from "./check";
 import { verbsCommand } from "./verbs";
 import { functionsCommand } from "./functions";
 import { validateIngestCommand } from "./validate-ingest";
 
-export const opalRoutes = buildRouteMap({
+export const opalRoutes = defineRoutes({
   routes: {
     check: checkCommand,
     verbs: verbsCommand,

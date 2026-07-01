@@ -1,4 +1,4 @@
-import { buildCommand } from "@stricli/core";
+import { defineCommand } from "../../lib/stricli-wrappers";
 import chalk from "chalk";
 import type { LocalContext } from "../../context";
 import {
@@ -90,7 +90,7 @@ async function list(
   }
 }
 
-export const listCommand = buildCommand({
+export const listCommand = defineCommand({
   loader: async () => list,
   parameters: {
     positional: { kind: "tuple", parameters: [] },
