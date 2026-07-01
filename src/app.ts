@@ -29,6 +29,10 @@ import { helpCommand } from "./commands/help.js";
 // import { tagValueRoutes } from "./commands/tag-value/index.js";
 import { boardRoutes } from "./commands/board/index.js";
 import { folderRoutes } from "./commands/folder/index.js";
+import { opalRoutes } from "./commands/opal/index.js";
+import { fleetRoutes } from "./commands/fleet/index.js";
+import { schemaRoutes } from "./commands/schema/index.js";
+import { worksheetRoutes } from "./commands/worksheet/index.js";
 import { CURRENT_CLI_VERSION } from "./lib/constants.js";
 import { defineRoutes } from "./lib/stricli-wrappers.js";
 
@@ -53,6 +57,10 @@ export const routes = defineRoutes({
     // "datastream-token": datastreamTokenRoutes,
     board: boardRoutes,
     folder: folderRoutes,
+    opal: opalRoutes,
+    fleet: fleetRoutes,
+    schema: schemaRoutes,
+    worksheet: worksheetRoutes,
     cli: cliRoutes,
   },
   defaultCommand: "help",
