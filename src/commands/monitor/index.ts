@@ -1,3 +1,4 @@
+import { monitorMuteRoutes } from "./mute/index";
 import { defineRoutes } from "../../lib/stricli-wrappers";
 import { listCommand } from "./list";
 import { viewCommand } from "./view";
@@ -16,6 +17,7 @@ export const monitorRoutes = defineRoutes({
     delete: deleteCommand,
     enable: enableCommand,
     disable: disableCommand,
+    mute: monitorMuteRoutes,
   },
   docs: {
     brief: "Manage observe monitors",
@@ -30,6 +32,7 @@ export const monitorRoutes = defineRoutes({
       "  delete   Delete a monitor",
       "  enable   Enable a monitor",
       "  disable  Disable a monitor",
+      "  mute   Manage monitor mute rules (snoozes)",
     ].join("\n"),
   },
 });

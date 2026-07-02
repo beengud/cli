@@ -10,6 +10,7 @@ Command line interface for [Observe Inc](https://www.observeinc.com).
 - **OPAL Query Execution** - Run OPAL queries directly from your terminal with schema-aware table output.
 - **AI Agent Skills** - List and view reusable AI-agent instruction documents stored in Observe.
 - **Alert Monitoring** - List and view alerts with severity filtering and active-only views.
+- **Monitor Mutes** - Full CRUD for monitor mute rules (snoozes), targeting all monitors or a specific set.
 - **Datastream Management** - Create, list, view, and update datastreams.
 - **Multiple Output Formats** - All commands support `--format json` and `--format csv` for scripting and pipelines.
 - **Responsive Tables** - Terminal-aware column widths with automatic text wrapping.
@@ -50,6 +51,11 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe skill view`                    | View skill details and content                          |
 | `observe alert list`                    | List alerts with severity and status filtering          |
 | `observe alert view`                    | View full alert details                                 |
+| `observe monitor mute list`             | List and search monitor mute rules                      |
+| `observe monitor mute view`             | View full monitor mute rule details                     |
+| `observe monitor mute create`           | Create a monitor mute rule                              |
+| `observe monitor mute update`           | Update a monitor mute rule                              |
+| `observe monitor mute delete`           | Delete a monitor mute rule                              |
 | `observe datastream create`             | Create a new datastream                                 |
 | `observe datastream list`               | List datastreams                                        |
 | `observe datastream view`               | View a datastream by ID                                 |
