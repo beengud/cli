@@ -34,6 +34,21 @@ To update installed skills after edits in this repo, run `npx skills update`.
 
 ## Commands
 
+> Note: some commands listed below are temporarily disabled in this build. They
+> depend on generated GraphQL/REST types that cannot be regenerated while the
+> target tenant has GraphQL introspection disabled (`bun codegen:gql`) or while
+> the REST client is missing tenant-absent APIs (`bun codegen:rest`, needs a Java
+> runtime). They are commented out in `src/app.ts` and `src/rest/client.ts`
+> (search for "TEMP: trimmed"). The currently active commands are: `help`,
+> `dataset`, `alert`, `monitor`, `docs`, `board`, `folder`, `opal`, `fleet`,
+> `schema`, `worksheet`, `cli`.
+>
+> `schema introspect` additionally requires the tenant to have GraphQL
+> introspection enabled. `dataset dry-run` and `dataset impact` are wired but
+> unverified on this tenant: their underlying operations drifted
+> (`saveDatasetDryRun` removed; `getDatasetsAffectedByDatasetUpdate` result
+> fields renamed) and the new shapes cannot be re-derived without introspection.
+
 | Command                                 | Description                                             |
 | --------------------------------------- | ------------------------------------------------------- |
 | `observe help`                          | Show help information                                   |
@@ -47,6 +62,8 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe tag-key list`                  | Search tag keys in the knowledge graph                  |
 | `observe dataset list`                  | List datasets with optional filtering                   |
 | `observe dataset view`                  | View dataset details and schema                         |
+| `observe dataset dry-run`               | Dry-run a dataset pipeline change (unverified on tenant) |
+| `observe dataset impact`                | Report datasets affected by a change (unverified)       |
 | `observe metric list`                   | Search and list metrics                                 |
 | `observe metric view`                   | View metric details and dimensions                      |
 | `observe query`                         | Execute OPAL queries on datasets                        |
@@ -65,6 +82,31 @@ To update installed skills after edits in this repo, run `npx skills update`.
 | `observe datastream update`             | Update a datastream                                     |
 | `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
 | `observe docs search`                   | Search Observe's documentation                          |
+| `observe board create`                  | Create a board (dashboard) from a JSON file             |
+| `observe board update`                  | Update an existing board from a JSON file               |
+| `observe board get`                     | Get a board by ID as JSON                               |
+| `observe board list`                    | List boards in a workspace                              |
+| `observe board delete`                  | Delete a board by ID                                    |
+| `observe board scaffold`                | Print a minimal board JSON template                     |
+| `observe board set-default`             | Set the default dashboard for a dataset                 |
+| `observe board clear-default`           | Clear the default dashboard for a dataset               |
+| `observe folder create`                 | Create a folder (use --ensure to make it idempotent)    |
+| `observe folder get`                    | Look up a folder by name and print its ID               |
+| `observe folder update`                 | Update a folder's name, description, or icon URL        |
+| `observe folder delete`                 | Delete a folder by ID                                   |
+| `observe opal check`                    | Validate an OPAL pipeline and print its result schema   |
+| `observe opal verbs`                    | List all OPAL verbs                                     |
+| `observe opal functions`                | List all OPAL functions                                 |
+| `observe opal validate-ingest`          | Validate an OPAL ingest filter against a dataset        |
+| `observe fleet status`                  | Current status of all observe-agent instances           |
+| `observe fleet host`                    | observe-agent details for a single host                 |
+| `observe fleet versions`                | observe-agent versions across the fleet                 |
+| `observe fleet auth`                    | observe-agent auth-check status across the fleet        |
+| `observe schema introspect`             | Dump the GraphQL schema as JSON (introspection req'd)   |
+| `observe worksheet list`                | List worksheets in a workspace                          |
+| `observe worksheet get`                 | Get a worksheet by ID as JSON                           |
+| `observe worksheet create`              | Create a worksheet from a JSON file                     |
+| `observe worksheet delete`              | Delete a worksheet by ID                                |
 | `observe cli install`                   | Configure shell integration (PATH, completions)         |
 | `observe cli uninstall`                 | Remove shell integration                                |
 | `observe cli upgrade`                   | Upgrade to the latest version                           |
