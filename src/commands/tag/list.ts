@@ -1,9 +1,9 @@
 import { defineCommand } from "../../lib/stricli-wrappers";
 import chalk from "chalk";
 import type { LocalContext } from "../../context";
-import { listTagValues } from "../../rest/tag-value/list-tag-values";
-import type { TagValuePair } from "../../rest/types/tag-values";
-import { TagValuesSearchMode } from "../../rest/generated";
+import { listTags } from "../../rest/tag/list-tags";
+import type { TagEntry } from "../../rest/types/tags";
+import { celFuzzyContains, combineFilters } from "../../lib/cel";
 import { loadConfig } from "../../lib/config";
 import { formatApiError } from "../../lib/format-error";
 import { muteStatusWriter } from "../../lib/writer";
@@ -15,46 +15,48 @@ import {
 import { renderAsCSV } from "../../lib/formatters/csv";
 
 type OutputFormat = "json" | "csv";
-type SearchMode = "semantic" | "regex";
 
-interface ListTagValuesFlags {
+interface ListTagsFlags {
   match?: string;
-  mode?: SearchMode;
   limit: number;
+  "value-limit"?: number;
   format?: OutputFormat;
   json?: boolean;
 }
 
-const DEFAULT_LIMIT = 25;
+const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 100;
 const MIN_LIMIT = 1;
 
-const col = createColumnHelper<TagValuePair>();
+/** Base scope predicate: tag search only surfaces correlation tags. */
+const CORRELATION_KIND_FILTER = 'kind == "Correlation"';
 
-const columns: ColumnDef<TagValuePair>[] = [
+const col = createColumnHelper<TagEntry>();
+
+const columns: ColumnDef<TagEntry>[] = [
   col.accessor((row) => row.name, {
     header: "TAG KEY",
     format: (value) => chalk.yellow(value),
   }),
-  col.accessor((row) => row.value, {
-    header: "TAG VALUE",
+  col.accessor((row) => row.values.join(", "), {
+    header: "TAG VALUES",
     flex: true,
   }),
 ];
 
-export interface ListTagValuesDeps {
+export interface ListTagsDeps {
   loadConfig?: typeof loadConfig;
-  listTagValues?: typeof listTagValues;
+  listTags?: typeof listTags;
 }
 
 export async function list(
   this: LocalContext,
-  flags: ListTagValuesFlags,
-  deps: ListTagValuesDeps = {},
+  flags: ListTagsFlags,
+  deps: ListTagsDeps = {},
 ): Promise<void> {
   const {
     loadConfig: loadConfigImpl = loadConfig,
-    listTagValues: listRest = listTagValues,
+    listTags: listRest = listTags,
   } = deps;
   const format = flags.json ? ("json" as const) : flags.format;
   const { process, writer: _writer } = this;
@@ -65,42 +67,39 @@ export async function list(
   try {
     const config = loadConfigImpl();
 
-    writer.info("Searching for tag values...");
+    writer.info("Searching for tags...");
 
-    // Search runs against the REST `/v1/tags/values` endpoint. The endpoint
-    // requires a `query`, so resolve the match-all fallback and map `--mode`
-    // onto the API enum here, keeping the REST helper a thin wrapper. With no
-    // query the semantic backend has nothing to rank against, so fall back
-    // to a match-all regex.
-    const match = flags.match ?? "";
+    // Search runs against the REST `/v1/tags` endpoint. Build the CEL filter
+    // here (correlation-kind scope AND'd with an optional case-insensitive
+    // fuzzy match on the tag name) so the REST helper stays a thin wrapper.
     const response = await listRest({
       config,
-      query: match !== "" ? match : ".*",
-      mode:
-        match !== "" && flags.mode !== "regex"
-          ? TagValuesSearchMode.Semantic
-          : TagValuesSearchMode.Regex,
+      filter: combineFilters([
+        CORRELATION_KIND_FILTER,
+        flags.match ? celFuzzyContains("name", flags.match) : undefined,
+      ]),
       limit: flags.limit,
+      valueLimit: flags["value-limit"],
     });
-    const { tagValuePairs } = response;
+    const { tags } = response;
 
     if (format === "json") {
-      writer.write(JSON.stringify(tagValuePairs, null, 2));
+      writer.write(JSON.stringify(tags, null, 2));
       return;
     }
 
     if (format === "csv") {
-      writer.write(renderAsCSV(tagValuePairs));
+      writer.write(renderAsCSV(tags));
       return;
     }
 
-    if (tagValuePairs.length === 0) {
-      writer.warn("No tag values found.");
+    if (tags.length === 0) {
+      writer.warn("No tags found.");
       return;
     }
 
-    writer.write(chalk.green(`Found ${tagValuePairs.length} tag value(s):\n`));
-    writer.write(formatTable(tagValuePairs, columns));
+    writer.write(chalk.green(`Found ${tags.length} tag(s):\n`));
+    writer.write(formatTable(tags, columns));
   } catch (error) {
     writer.error(`Error: ${await formatApiError(error)}`);
     process.exitCode = 1;
@@ -122,20 +121,20 @@ export const listCommand = defineCommand({
       match: {
         kind: "parsed",
         parse: String,
-        brief: "Search tag values by keyword or pattern",
-        optional: true,
-      },
-      mode: {
-        kind: "enum",
-        values: ["semantic", "regex"],
-        brief: "Search mode (default: semantic)",
+        brief: "Search tags by keyword (case-insensitive substring)",
         optional: true,
       },
       limit: {
         kind: "parsed",
         parse: parseLimit,
-        brief: `Maximum number of tag values to return (${MIN_LIMIT}-${MAX_LIMIT})`,
+        brief: `Maximum number of tags to return (${MIN_LIMIT}-${MAX_LIMIT})`,
         default: String(DEFAULT_LIMIT),
+      },
+      "value-limit": {
+        kind: "parsed",
+        parse: parseLimit,
+        brief: `Maximum number of tag values to show per tag (${MIN_LIMIT}-${MAX_LIMIT})`,
+        optional: true,
       },
       format: {
         kind: "enum",
@@ -155,6 +154,6 @@ export const listCommand = defineCommand({
     },
   },
   docs: {
-    brief: "Search for tag values",
+    brief: "Search for tags",
   },
 });

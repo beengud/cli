@@ -23,10 +23,10 @@ import { worksheetRoutes } from "./commands/worksheet/index.js";
 // import { queryCommand } from "./commands/query.js";
 // Trimmed: rely on REST APIs the target tenant's OpenAPI spec does not expose, so
 // they are absent from the regenerated src/rest/generated client (skill→SkillsApi,
-// tag-key/tag-value→V2KnowledgeGraphApi). Restore if the tenant exposes them.
-// See src/rest/client.ts.
+// tag/tag-value→V2KnowledgeGraphApi/TagsApi/TagValuesApi). Restore if the tenant
+// exposes them. See src/rest/client.ts. NOTE: upstream renamed `tag-key`→`tag` (#54).
 // import { skillRoutes } from "./commands/skill/index.js";
-// import { tagKeyRoutes } from "./commands/tag-key/index.js";
+// import { tagRoutes } from "./commands/tag/index.js";
 // import { tagValueRoutes } from "./commands/tag-value/index.js";
 import { cliRoutes } from "./commands/cli/index.js";
 import { datasetRoutes } from "./commands/dataset/index.js";
@@ -43,7 +43,8 @@ export const routes = defineRoutes({
     // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
     // auth: authRoutes,
     // "tag-value": tagValueRoutes,
-    // "tag-key": tagKeyRoutes,
+    // tag: tagRoutes,        (upstream #54 renamed tag-key→tag)
+    // "tag-key": tagRoutes,  (pre-rename alias)
     dataset: datasetRoutes,
     // metric: metricRoutes,
     // query: queryCommand,
@@ -71,7 +72,11 @@ export const routes = defineRoutes({
     brief: "Observe CLI",
     fullDescription:
       "observe is a command-line interface for interacting with Observe Inc. " +
-      "It provides commands for configuration, querying datasets, and more.",
+      "It provides commands for configuration, querying datasets, and more.\n\n" +
+      "Set OBSERVE_CLI_EXPERIMENTAL=1 to reveal experimental commands. ",
+    hideRoute: {
+      "tag-key": true,
+    },
   },
 });
 
