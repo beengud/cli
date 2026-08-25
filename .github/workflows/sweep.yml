@@ -10,6 +10,9 @@ permissions:
 
 jobs:
   sweep:
+    # Fork guard: the sweep hits the live tenant with secrets only the upstream
+    # repo carries. Skip (not fail) on forks like beengud/cli.
+    if: github.repository == 'observeinc/cli'
     runs-on: ubuntu-latest
     concurrency:
       group: integration-sweep

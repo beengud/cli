@@ -14,6 +14,9 @@ permissions:
 
 jobs:
   integration:
+    # Fork guard: integration tests need live-tenant secrets that only the
+    # upstream repo carries. Skip (not fail) on forks like beengud/cli.
+    if: github.repository == 'observeinc/cli'
     runs-on: ubuntu-latest
     concurrency:
       group: integration-tests-${{ github.ref }}
@@ -57,7 +60,7 @@ jobs:
     name: Notify Slack on failure
     runs-on: ubuntu-latest
     needs: [integration]
-    if: failure() && github.ref == 'refs/heads/main'
+    if: failure() && github.ref == 'refs/heads/main' && github.repository == 'observeinc/cli'
     steps:
       - name: Send Slack alert
         env:
