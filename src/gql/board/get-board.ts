@@ -15,6 +15,7 @@ export interface BoardStage {
   id: string | null;
   stageID: string | null;
   pipeline: string | null;
+  layout: unknown;
   input: BoardStageInput[] | null;
 }
 
@@ -53,6 +54,7 @@ const GetBoardDocument = parse(`
         id
         stageID
         pipeline
+        layout
         input {
           inputName
           datasetId
