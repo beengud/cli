@@ -1,0 +1,38 @@
+name: Sync to GitLab
+
+# Mirror github.com/beengud/cli to the NHL GitLab repo immediately after every
+# merge to main, so the mop projects consume the new CLI from GitLab.
+#
+# Required GitHub secret (Settings → Secrets and variables → Actions):
+#   GITLAB_SYNC_TOKEN  — GitLab project access token with write_repository scope
+#                        on the mirror repo below.
+#
+# Required GitHub Actions variable (Settings → Secrets and variables → Actions → Variables):
+#   GITLAB_MIRROR_URL  — host/path of the mirror repo WITHOUT scheme or .git, e.g.
+#                        gitlab.com/nhl/mop/cli
+#                        (confirm the exact path when you create the GitLab repo).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    name: Mirror → GitLab
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror clone and push to GitLab
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+          GITLAB_MIRROR_URL: ${{ vars.GITLAB_MIRROR_URL }}
+        run: |
+          if [ -z "$GITLAB_SYNC_TOKEN" ] || [ -z "$GITLAB_MIRROR_URL" ]; then
+            echo "::error::Set the GITLAB_SYNC_TOKEN secret and GITLAB_MIRROR_URL variable before enabling this workflow."
+            exit 1
+          fi
+          # A bare mirror clone contains only real refs (no remote-tracking refs),
+          # so GitLab won't reject the push with "deny updating a hidden ref".
+          git clone --mirror https://github.com/beengud/cli.git repo
+          cd repo
+          git push --mirror "https://oauth2:${GITLAB_SYNC_TOKEN}@${GITLAB_MIRROR_URL}.git"
