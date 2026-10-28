@@ -1,7 +1,7 @@
 
 # ApmMetricRef
 
-One queryable metric on Service.related.metrics. attributeMapping maps each Service field name to one or more dimension names in this metric\'s dataset. 
+One queryable metric on Service.related.metrics. Names are the RED metrics used for this row (call count, error count, duration). Every entry shares the same `attributeMapping` as `related.correlationTags`. Pick the `serviceName` dimension from `Service.type`: `Service` → `service.name`, `Database` → `peer.db.name`, `Messaging` → `peer.messaging.system`, `ExternalCall` → `peer.server.address`. Precedence is `Service` > `Database` > `Messaging` > `ExternalCall`. When `type` is null, use `service.name`. 
 
 ## Properties
 

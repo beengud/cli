@@ -1,7 +1,7 @@
 
 # MonitorV2ActionRule
 
-Either the actionId or the definition must be present when setting. The actionId references an existing shared action, while the definition would be used to configure an inline (private to a monitor) action. 
+Either the actionId or the definition must be present when setting. The actionId references an existing shared action, while the definition would be used to configure an inline (private to a monitor) action. A read returns both: the actionId of the bound action and, for an inline action, the definition that can be edited and sent back. 
 
 ## Properties
 

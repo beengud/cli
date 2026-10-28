@@ -7,8 +7,8 @@ Aggregated stats for requested dataset attributes
 
 Name | Type
 ------------ | -------------
-`attributes` | [Array&lt;DatasetAttributeStats&gt;](DatasetAttributeStats.md)
-`multiValueAttributes` | [Array&lt;DatasetAttributeStats&gt;](DatasetAttributeStats.md)
+`attributes` | [Array&lt;AttributeStats&gt;](AttributeStats.md)
+`multiValueAttributes` | [Array&lt;AttributeStats&gt;](AttributeStats.md)
 `meta` | [DatasetStatsMeta](DatasetStatsMeta.md)
 
 

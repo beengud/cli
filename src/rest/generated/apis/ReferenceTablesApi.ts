@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Observe API
+ * Observe by Snowflake API
  * # Overview Welcome to the Observe API Docs!  The Observe API is a RESTful API. POST bodies and responses are typically JSON-encoded.  ## Authentication Requests to the Observe API are authenticated with an API token. The token can be supplied using HTTP Bearer authentication: ``` // passing token as bearer token curl -H \"Authorization: Bearer <customerid> <token>\" https://<customerid>.<observe-domain>.com/v1/... ``` 
  *
  * The version of the OpenAPI document: 1.0.230307
@@ -17,6 +17,7 @@ import * as runtime from '../runtime';
 import type {
   ErrorMessage,
   QueryReferenceTables200Response,
+  ReferenceTablesMessageResponse,
   ReferenceTablesTable,
   ReferenceTablesTableMetadata,
   ReferenceTablesTableMetadataPatch,
@@ -136,7 +137,7 @@ export class ReferenceTablesApi extends runtime.BaseAPI {
      * Deletes a reference table with the specified ID.
      * Delete a reference table
      */
-    async deleteReferenceTableRaw(requestParameters: ReferenceTablesApiDeleteReferenceTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UpdateReferenceTable200Response>> {
+    async deleteReferenceTableRaw(requestParameters: ReferenceTablesApiDeleteReferenceTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ReferenceTablesMessageResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -174,7 +175,7 @@ export class ReferenceTablesApi extends runtime.BaseAPI {
      * Deletes a reference table with the specified ID.
      * Delete a reference table
      */
-    async deleteReferenceTable(requestParameters: ReferenceTablesApiDeleteReferenceTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UpdateReferenceTable200Response> {
+    async deleteReferenceTable(requestParameters: ReferenceTablesApiDeleteReferenceTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ReferenceTablesMessageResponse> {
         const response = await this.deleteReferenceTableRaw(requestParameters, initOverrides);
         return await response.value();
     }

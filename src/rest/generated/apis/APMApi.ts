@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Observe API
+ * Observe by Snowflake API
  * # Overview Welcome to the Observe API Docs!  The Observe API is a RESTful API. POST bodies and responses are typically JSON-encoded.  ## Authentication Requests to the Observe API are authenticated with an API token. The token can be supplied using HTTP Bearer authentication: ``` // passing token as bearer token curl -H \"Authorization: Bearer <customerid> <token>\" https://<customerid>.<observe-domain>.com/v1/... ``` 
  *
  * The version of the OpenAPI document: 1.0.230307
@@ -49,6 +49,7 @@ export interface APMApiListApmServicesRequest {
     serviceName?: string;
     environment?: string;
     serviceNamespace?: string;
+    serviceType?: string;
     startTime?: string;
     endTime?: string;
     expand?: boolean;
@@ -201,7 +202,7 @@ export class APMApi extends runtime.BaseAPI {
     }
 
     /**
-     * > **Beta — may change; breaking changes are coordinated with affected > customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under `redMetrics`. Filters are exact-match on `serviceName`, `environment`, and `serviceNamespace`; an omitted filter matches every value of that dimension.  When `expand=true`, each row\'s `redMetrics.series[]` additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive `series[].timestamp`. When `expand` is false or omitted, `series` is absent (not `null`, not an empty array).  Zero matches return `200` with `services: []` and `meta.totalCount: 0`. `meta.totalCount` is `-1` when an exact count is too expensive to compute; in that case paginate by advancing `offset` until a page shorter than `limit` is returned.  Response size grows with the number of rows on the page and, when `expand=true`, with the number of series points per row. A wide window combined with `expand=true` can therefore make a single page exceed the server response-size limit and return `413 PayloadTooLarge`. Recover by narrowing the time window or requesting a smaller `limit`. `limit` is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when `expand=true`. 
+     * > **Beta — may change; breaking changes are coordinated with affected > customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under `redMetrics`. Filters are exact-match on `serviceName`, `environment`, `serviceNamespace`, and `serviceType`; an omitted filter matches every value of that dimension. Omit `serviceType` to return every catalog type (`Service`, `Database`, `Messaging`). External values are not catalog types (`400`). When `serviceType` is omitted and `serviceName` is set, the name matches `service.name` OR `peer.db.name` OR `peer.messaging.system`.  When `expand=true`, each row\'s `redMetrics.series[]` additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive `series[].timestamp`. When `expand` is false or omitted, `series` is absent (not `null`, not an empty array).  Zero matches return `200` with `services: []` and `meta.totalCount: 0`. `meta.totalCount` is `-1` when an exact count is too expensive to compute; in that case paginate by advancing `offset` until a page shorter than `limit` is returned.  Response size grows with the number of rows on the page and, when `expand=true`, with the number of series points per row. A wide window combined with `expand=true` can therefore make a single page exceed the server response-size limit and return `413 PayloadTooLarge`. Recover by narrowing the time window or requesting a smaller `limit`. `limit` is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when `expand=true`. 
      * List APM services with RED metrics
      */
     async listApmServicesRaw(requestParameters: APMApiListApmServicesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApmServicesListResponse>> {
@@ -217,6 +218,10 @@ export class APMApi extends runtime.BaseAPI {
 
         if (requestParameters['serviceNamespace'] != null) {
             queryParameters['serviceNamespace'] = requestParameters['serviceNamespace'];
+        }
+
+        if (requestParameters['serviceType'] != null) {
+            queryParameters['serviceType'] = requestParameters['serviceType'];
         }
 
         if (requestParameters['startTime'] != null) {
@@ -267,7 +272,7 @@ export class APMApi extends runtime.BaseAPI {
     }
 
     /**
-     * > **Beta — may change; breaking changes are coordinated with affected > customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under `redMetrics`. Filters are exact-match on `serviceName`, `environment`, and `serviceNamespace`; an omitted filter matches every value of that dimension.  When `expand=true`, each row\'s `redMetrics.series[]` additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive `series[].timestamp`. When `expand` is false or omitted, `series` is absent (not `null`, not an empty array).  Zero matches return `200` with `services: []` and `meta.totalCount: 0`. `meta.totalCount` is `-1` when an exact count is too expensive to compute; in that case paginate by advancing `offset` until a page shorter than `limit` is returned.  Response size grows with the number of rows on the page and, when `expand=true`, with the number of series points per row. A wide window combined with `expand=true` can therefore make a single page exceed the server response-size limit and return `413 PayloadTooLarge`. Recover by narrowing the time window or requesting a smaller `limit`. `limit` is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when `expand=true`. 
+     * > **Beta — may change; breaking changes are coordinated with affected > customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under `redMetrics`. Filters are exact-match on `serviceName`, `environment`, `serviceNamespace`, and `serviceType`; an omitted filter matches every value of that dimension. Omit `serviceType` to return every catalog type (`Service`, `Database`, `Messaging`). External values are not catalog types (`400`). When `serviceType` is omitted and `serviceName` is set, the name matches `service.name` OR `peer.db.name` OR `peer.messaging.system`.  When `expand=true`, each row\'s `redMetrics.series[]` additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive `series[].timestamp`. When `expand` is false or omitted, `series` is absent (not `null`, not an empty array).  Zero matches return `200` with `services: []` and `meta.totalCount: 0`. `meta.totalCount` is `-1` when an exact count is too expensive to compute; in that case paginate by advancing `offset` until a page shorter than `limit` is returned.  Response size grows with the number of rows on the page and, when `expand=true`, with the number of series points per row. A wide window combined with `expand=true` can therefore make a single page exceed the server response-size limit and return `413 PayloadTooLarge`. Recover by narrowing the time window or requesting a smaller `limit`. `limit` is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when `expand=true`. 
      * List APM services with RED metrics
      */
     async listApmServices(requestParameters: APMApiListApmServicesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApmServicesListResponse> {

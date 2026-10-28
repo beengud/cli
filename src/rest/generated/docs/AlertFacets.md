@@ -11,6 +11,7 @@ Name | Type
 `byLevel` | [Array&lt;AlertFacetEntry&gt;](AlertFacetEntry.md)
 `byMonitor` | [Array&lt;AlertFacetEntry&gt;](AlertFacetEntry.md)
 `byMuted` | [Array&lt;AlertFacetEntry&gt;](AlertFacetEntry.md)
+`byHasAiChat` | [Array&lt;AlertFacetEntry&gt;](AlertFacetEntry.md)
 
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)

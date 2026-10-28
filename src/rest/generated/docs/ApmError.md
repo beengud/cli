@@ -1,7 +1,7 @@
 
 # ApmError
 
-APM error envelope. Extends the platform error (type + message) with a closed `type` enum and, on OutOfAcceleratedRange, the acceleratedFrom recovery timestamp. 
+APM error envelope. Extends the platform error (type + message) with a closed `type` enum (see Apm-ErrorType). On OutOfAcceleratedRange, acceleratedFrom is the recovery timestamp. 
 
 ## Properties
 

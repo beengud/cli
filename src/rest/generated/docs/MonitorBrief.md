@@ -7,6 +7,7 @@ Brief monitor metadata included when a reference is expanded.
 
 Name | Type
 ------------ | -------------
+`name` | string
 `label` | string
 `description` | string
 
