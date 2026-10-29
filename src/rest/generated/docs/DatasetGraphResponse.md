@@ -1,13 +1,14 @@
 
 # DatasetGraphResponse
 
-Response body for both GET /v1/datasets/graph and GET /v1/datasets/{id}/graph. On the full-graph endpoint: datasets are sorted by id ascending, and meta.totalCount is always the number of returned datasets (never -1). On the focal endpoint: datasets are sorted in BFS-nearest order (focal first, then by BFS depth, ties broken by id ascending for determinism), and meta.totalCount is -1 iff the BFS was capped by limit; otherwise it is the number of returned datasets. 
+Response body for both GET /v1/datasets/graph and GET /v1/datasets/{id}/graph. On the full-graph endpoint: datasets are sorted by id ascending, and meta.totalCount is always the number of returned datasets (never -1). On the focal endpoint: datasets are sorted in BFS-nearest order (focal first, then by BFS depth; order within a depth is unspecified but stable for a given graph), and meta.totalCount is -1 iff the BFS was capped by limit; otherwise it is the number of returned datasets. 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
 `datasets` | [Array&lt;DatasetGraphSummary&gt;](DatasetGraphSummary.md)
+`restrictedConnections` | [Array&lt;DatasetGraphRestrictedConnection&gt;](DatasetGraphRestrictedConnection.md)
 `meta` | [Meta](Meta.md)
 
 

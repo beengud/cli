@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Observe API
+ * Observe by Snowflake API
  * # Overview Welcome to the Observe API Docs!  The Observe API is a RESTful API. POST bodies and responses are typically JSON-encoded.  ## Authentication Requests to the Observe API are authenticated with an API token. The token can be supplied using HTTP Bearer authentication: ``` // passing token as bearer token curl -H \"Authorization: Bearer <customerid> <token>\" https://<customerid>.<observe-domain>.com/v1/... ``` 
  *
  * The version of the OpenAPI document: 1.0.230307
@@ -15,15 +15,19 @@
 
 import * as runtime from '../runtime';
 import type {
-  MonitorV2,
+  ErrorMessage,
+  MonitorCreateRequest,
+  MonitorListResponse,
+  MonitorResource,
+  MonitorStatsResponse,
   MonitorV2MuteRule,
   MonitorV2MuteRuleTerse,
   MonitorV2PatchRequest,
-  MonitorV2Terse,
 } from '../models/index';
 
 export interface MonitorApiCreateMonitorRequest {
-    monitorV2: Omit<MonitorV2, 'id'|'disabled'|'effectiveScheduling'>;
+    monitorCreateRequest: MonitorCreateRequest;
+    observeApiVersion?: string;
 }
 
 export interface MonitorApiCreateMonitorMuteRuleRequest {
@@ -31,7 +35,8 @@ export interface MonitorApiCreateMonitorMuteRuleRequest {
 }
 
 export interface MonitorApiDeleteMonitorRequest {
-    id: number;
+    id: string;
+    observeApiVersion?: string;
 }
 
 export interface MonitorApiDeleteMonitorMuteRuleRequest {
@@ -39,11 +44,19 @@ export interface MonitorApiDeleteMonitorMuteRuleRequest {
 }
 
 export interface MonitorApiGetMonitorRequest {
-    id: number;
+    id: string;
+    expand?: boolean;
+    observeApiVersion?: string;
 }
 
 export interface MonitorApiGetMonitorMuteRuleRequest {
     id: number;
+}
+
+export interface MonitorApiGetMonitorStatsRequest {
+    attributes: string;
+    topK: number;
+    filter?: string;
 }
 
 export interface MonitorApiListMonitorMuteRulesRequest {
@@ -52,8 +65,14 @@ export interface MonitorApiListMonitorMuteRulesRequest {
 }
 
 export interface MonitorApiListMonitorsRequest {
+    filter?: string;
+    expand?: boolean;
+    limit?: number;
+    offset?: number;
+    orderBy?: string;
     nameExact?: string;
     nameSubstring?: string;
+    observeApiVersion?: string;
 }
 
 export interface MonitorApiUpdateMonitorRequest {
@@ -67,13 +86,14 @@ export interface MonitorApiUpdateMonitorRequest {
 export class MonitorApi extends runtime.BaseAPI {
 
     /**
-     * Create a new MonitorV2 and bind to actions
+     * > **⚠️ Alpha — the versioned request is under active development and > may change without notice. The default request is stable.**  Creates a monitor, and any inline actions it notifies through, in the account\'s default workspace.  The `Observe-Api-Version` header picks one of two request shapes.  **Default (no header).** The long-standing body, the default shape of `GET /v1/monitors/{id}` with its `definition` and `actionRules`, which does not change. The `201` returns that shape too. The schema on this page describes the versioned shape, not this one.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later takes the `Monitor-CreateRequest` below, which is written the way the versioned `GET /v1/monitors/{id}` reads, and returns the created `Monitor-Resource`. It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date takes the default shape.  Composite monitors are created with `POST /v1/composite-monitors`. 
+     * Create a monitor
      */
-    async createMonitorRaw(requestParameters: MonitorApiCreateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorV2>> {
-        if (requestParameters['monitorV2'] == null) {
+    async createMonitorRaw(requestParameters: MonitorApiCreateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorResource>> {
+        if (requestParameters['monitorCreateRequest'] == null) {
             throw new runtime.RequiredError(
-                'monitorV2',
-                'Required parameter "monitorV2" was null or undefined when calling createMonitor().'
+                'monitorCreateRequest',
+                'Required parameter "monitorCreateRequest" was null or undefined when calling createMonitor().'
             );
         }
 
@@ -82,6 +102,10 @@ export class MonitorApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
+
+        if (requestParameters['observeApiVersion'] != null) {
+            headerParameters['Observe-Api-Version'] = String(requestParameters['observeApiVersion']);
+        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -99,16 +123,17 @@ export class MonitorApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['monitorV2'],
+            body: requestParameters['monitorCreateRequest'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response);
     }
 
     /**
-     * Create a new MonitorV2 and bind to actions
+     * > **⚠️ Alpha — the versioned request is under active development and > may change without notice. The default request is stable.**  Creates a monitor, and any inline actions it notifies through, in the account\'s default workspace.  The `Observe-Api-Version` header picks one of two request shapes.  **Default (no header).** The long-standing body, the default shape of `GET /v1/monitors/{id}` with its `definition` and `actionRules`, which does not change. The `201` returns that shape too. The schema on this page describes the versioned shape, not this one.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later takes the `Monitor-CreateRequest` below, which is written the way the versioned `GET /v1/monitors/{id}` reads, and returns the created `Monitor-Resource`. It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date takes the default shape.  Composite monitors are created with `POST /v1/composite-monitors`. 
+     * Create a monitor
      */
-    async createMonitor(requestParameters: MonitorApiCreateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorV2> {
+    async createMonitor(requestParameters: MonitorApiCreateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorResource> {
         const response = await this.createMonitorRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -161,7 +186,8 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a MonitorV2
+     * > **⚠️ Alpha — the versioned response is under active development and > may change without notice. The default response is stable.**  Deletes a monitor, stops its evaluation, and deletes the inline actions that belong to it. Shared actions it notified through are kept.  The `Observe-Api-Version` header picks one of two behaviors.  **Default (no header).** The long-standing delete, which does not change.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later answers as documented here, refusing before anything is removed:  | Status | When | |---|---| | `204` | Deleted. | | `400` | A composite monitor; see below. | | `403` | You can view the monitor but not edit it, or an app manages it. | | `404` | The monitor does not exist, or you cannot view it. | | `409` | A composite monitor is built on it. The message names the composites to remove it from. |  It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date takes the default behavior.  Composite monitors are deleted with `DELETE /v1/composite-monitors/{id}`. 
+     * Delete a monitor
      */
     async deleteMonitorRaw(requestParameters: MonitorApiDeleteMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['id'] == null) {
@@ -174,6 +200,10 @@ export class MonitorApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (requestParameters['observeApiVersion'] != null) {
+            headerParameters['Observe-Api-Version'] = String(requestParameters['observeApiVersion']);
+        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -198,7 +228,8 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a MonitorV2
+     * > **⚠️ Alpha — the versioned response is under active development and > may change without notice. The default response is stable.**  Deletes a monitor, stops its evaluation, and deletes the inline actions that belong to it. Shared actions it notified through are kept.  The `Observe-Api-Version` header picks one of two behaviors.  **Default (no header).** The long-standing delete, which does not change.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later answers as documented here, refusing before anything is removed:  | Status | When | |---|---| | `204` | Deleted. | | `400` | A composite monitor; see below. | | `403` | You can view the monitor but not edit it, or an app manages it. | | `404` | The monitor does not exist, or you cannot view it. | | `409` | A composite monitor is built on it. The message names the composites to remove it from. |  It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date takes the default behavior.  Composite monitors are deleted with `DELETE /v1/composite-monitors/{id}`. 
+     * Delete a monitor
      */
     async deleteMonitor(requestParameters: MonitorApiDeleteMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteMonitorRaw(requestParameters, initOverrides);
@@ -249,9 +280,10 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get a MonitorV2
+     * > **⚠️ Alpha — the versioned response is under active development and > may change without notice. The default response is stable.**  Returns one monitor in full: what `GET /v1/monitors` returns for it, plus the query and rules that define it.  The `Observe-Api-Version` header picks one of two response shapes.  **Default (no header).** The long-standing body — `id`, `name`, `description`, `disabled`, `health`, `ruleKind`, `monitorVersion`, `definition`, `actionRules` and `effectiveScheduling` — which does not change. The schema on this page describes the versioned shape, not this one.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later returns the `Monitor-Resource` below, which matches the list: the list\'s audit and health fields, durations in seconds, and no `definition` wrapper. It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date returns the default shape.  `POST /v1/monitors` and `DELETE` take the versioned shape too. `PATCH` ignores the header, so a versioned `GET` body cannot yet be edited and sent back. 
+     * Get a monitor
      */
-    async getMonitorRaw(requestParameters: MonitorApiGetMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorV2>> {
+    async getMonitorRaw(requestParameters: MonitorApiGetMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorResource>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -261,7 +293,15 @@ export class MonitorApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
+        if (requestParameters['expand'] != null) {
+            queryParameters['expand'] = requestParameters['expand'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (requestParameters['observeApiVersion'] != null) {
+            headerParameters['Observe-Api-Version'] = String(requestParameters['observeApiVersion']);
+        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -286,9 +326,10 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get a MonitorV2
+     * > **⚠️ Alpha — the versioned response is under active development and > may change without notice. The default response is stable.**  Returns one monitor in full: what `GET /v1/monitors` returns for it, plus the query and rules that define it.  The `Observe-Api-Version` header picks one of two response shapes.  **Default (no header).** The long-standing body — `id`, `name`, `description`, `disabled`, `health`, `ruleKind`, `monitorVersion`, `definition`, `actionRules` and `effectiveScheduling` — which does not change. The schema on this page describes the versioned shape, not this one.  **Versioned.** `Observe-Api-Version: 2026-10-06` or later returns the `Monitor-Resource` below, which matches the list: the list\'s audit and health fields, durations in seconds, and no `definition` wrapper. It is rolling out account by account; until it reaches yours, the header returns `403`. An earlier or unparseable date returns the default shape.  `POST /v1/monitors` and `DELETE` take the versioned shape too. `PATCH` ignores the header, so a versioned `GET` body cannot yet be edited and sent back. 
+     * Get a monitor
      */
-    async getMonitor(requestParameters: MonitorApiGetMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorV2> {
+    async getMonitor(requestParameters: MonitorApiGetMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorResource> {
         const response = await this.getMonitorRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -339,6 +380,71 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
+     * Counts monitors by one or more fields. No monitors are returned. Each entry in `attributes` is a field to group by, and the response carries one block per entry: that field\'s distinct-value count, and its most frequent values with a count each. Grouping by `health` answers \"how many monitors are in each health state\".  Fields are the ones `GET /v1/monitors` lists under `filter`, written the same way. An entry may also be a CEL expression over them, for buckets no single field provides: `aiTriagingMode == \"Triage\"` gives `\"true\"` and `\"false\"` rather than one bucket per stored mode. The expression must yield one scalar per monitor — that value becomes the bucket key — so a list or object is rejected with `400`.  Keys come back as JSON strings whatever the field\'s type: numbers as decimal digits, bools as `\"true\"` or `\"false\"`, timestamps as RFC 3339.  `meta` reports `totalMonitors` (before the filter) and `filteredMonitors` (after).  For example, facet counts for the list\'s Health and Type columns:  ``` GET /v1/monitors/stats?attributes=health,ruleKind&topK=10 ```  The AI column\'s two buckets, over enabled monitors only. Both values hold quotes, so both are CSV-escaped — inner `\"` doubled, the item wrapped — then URL-encoded:  ``` GET /v1/monitors/stats   ?attributes=\"aiTriagingMode == \"\"Triage\"\"\"   &filter=disabled == false ``` 
+     * Get monitor attribute statistics
+     */
+    async getMonitorStatsRaw(requestParameters: MonitorApiGetMonitorStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorStatsResponse>> {
+        if (requestParameters['attributes'] == null) {
+            throw new runtime.RequiredError(
+                'attributes',
+                'Required parameter "attributes" was null or undefined when calling getMonitorStats().'
+            );
+        }
+
+        if (requestParameters['topK'] == null) {
+            throw new runtime.RequiredError(
+                'topK',
+                'Required parameter "topK" was null or undefined when calling getMonitorStats().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['filter'] != null) {
+            queryParameters['filter'] = requestParameters['filter'];
+        }
+
+        if (requestParameters['attributes'] != null) {
+            queryParameters['attributes'] = requestParameters['attributes'];
+        }
+
+        if (requestParameters['topK'] != null) {
+            queryParameters['topK'] = requestParameters['topK'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/monitors/stats`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Counts monitors by one or more fields. No monitors are returned. Each entry in `attributes` is a field to group by, and the response carries one block per entry: that field\'s distinct-value count, and its most frequent values with a count each. Grouping by `health` answers \"how many monitors are in each health state\".  Fields are the ones `GET /v1/monitors` lists under `filter`, written the same way. An entry may also be a CEL expression over them, for buckets no single field provides: `aiTriagingMode == \"Triage\"` gives `\"true\"` and `\"false\"` rather than one bucket per stored mode. The expression must yield one scalar per monitor — that value becomes the bucket key — so a list or object is rejected with `400`.  Keys come back as JSON strings whatever the field\'s type: numbers as decimal digits, bools as `\"true\"` or `\"false\"`, timestamps as RFC 3339.  `meta` reports `totalMonitors` (before the filter) and `filteredMonitors` (after).  For example, facet counts for the list\'s Health and Type columns:  ``` GET /v1/monitors/stats?attributes=health,ruleKind&topK=10 ```  The AI column\'s two buckets, over enabled monitors only. Both values hold quotes, so both are CSV-escaped — inner `\"` doubled, the item wrapped — then URL-encoded:  ``` GET /v1/monitors/stats   ?attributes=\"aiTriagingMode == \"\"Triage\"\"\"   &filter=disabled == false ``` 
+     * Get monitor attribute statistics
+     */
+    async getMonitorStats(requestParameters: MonitorApiGetMonitorStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorStatsResponse> {
+        const response = await this.getMonitorStatsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * List MonitorV2 Mute Rules with optional filters
      */
     async listMonitorMuteRulesRaw(requestParameters: MonitorApiListMonitorMuteRulesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MonitorV2MuteRuleTerse>>> {
@@ -384,10 +490,31 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * List MonitorV2 instances with optional filters
+     * This operation has two response shapes, chosen per request by the `Observe-Api-Version` header.  **Default — stable.** Omit the header and the response is a plain JSON array of monitors. This is the long-standing behaviour that existing callers receive, and it does not change. It is summarised here rather than fully specified: the parameters and the response schema documented on this page describe the versioned shape.  **Versioned — rolling out.** Send `Observe-Api-Version: 2026-08-04` (or later) to get the paginated `{monitors, meta}` envelope specified below, with CEL `filter`, `limit`/`offset` paging, `orderBy` and `expand`. This shape is being rolled out account by account; until it reaches your account, sending the header returns `403`. An earlier or unparseable date selects the default shape instead. 
+     * List monitors
      */
-    async listMonitorsRaw(requestParameters: MonitorApiListMonitorsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MonitorV2Terse>>> {
+    async listMonitorsRaw(requestParameters: MonitorApiListMonitorsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MonitorListResponse>> {
         const queryParameters: any = {};
+
+        if (requestParameters['filter'] != null) {
+            queryParameters['filter'] = requestParameters['filter'];
+        }
+
+        if (requestParameters['expand'] != null) {
+            queryParameters['expand'] = requestParameters['expand'];
+        }
+
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['offset'] != null) {
+            queryParameters['offset'] = requestParameters['offset'];
+        }
+
+        if (requestParameters['orderBy'] != null) {
+            queryParameters['orderBy'] = requestParameters['orderBy'];
+        }
 
         if (requestParameters['nameExact'] != null) {
             queryParameters['nameExact'] = requestParameters['nameExact'];
@@ -398,6 +525,10 @@ export class MonitorApi extends runtime.BaseAPI {
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (requestParameters['observeApiVersion'] != null) {
+            headerParameters['Observe-Api-Version'] = String(requestParameters['observeApiVersion']);
+        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -421,15 +552,16 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * List MonitorV2 instances with optional filters
+     * This operation has two response shapes, chosen per request by the `Observe-Api-Version` header.  **Default — stable.** Omit the header and the response is a plain JSON array of monitors. This is the long-standing behaviour that existing callers receive, and it does not change. It is summarised here rather than fully specified: the parameters and the response schema documented on this page describe the versioned shape.  **Versioned — rolling out.** Send `Observe-Api-Version: 2026-08-04` (or later) to get the paginated `{monitors, meta}` envelope specified below, with CEL `filter`, `limit`/`offset` paging, `orderBy` and `expand`. This shape is being rolled out account by account; until it reaches your account, sending the header returns `403`. An earlier or unparseable date selects the default shape instead. 
+     * List monitors
      */
-    async listMonitors(requestParameters: MonitorApiListMonitorsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<MonitorV2Terse>> {
+    async listMonitors(requestParameters: MonitorApiListMonitorsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MonitorListResponse> {
         const response = await this.listMonitorsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Partially updates a monitor. Only **PATCH** is supported for this URL.  **Top-level merge:** The server reads the current monitor, then for each of these properties—`name`, `disabled`, `description`, `ruleKind`, `definition`, `actionRules`—uses the request value if the key is present in the body, otherwise keeps the stored value. Keys omitted from the body do not change.  **Replace entire subtrees:** If `definition` or `actionRules` appears in the body, it **replaces the whole** stored `definition` or `actionRules` value. The server does **not** deep-merge inside `definition`, inside individual action rules, or inside nested structures (for example an action rule’s `definition`). To change part of the monitor definition or action configuration, send the complete `definition` and/or full `actionRules` array you want saved.  **Not controlled by the body:** Other monitor fields (such as `id` from the path, or `monitorVersion`) are not updated from this JSON body using the merge rules above.  **Extra properties:** Any other top-level JSON properties in the body are ignored for this merge (they are not written to the monitor). 
+     * Partially updates a monitor. Only **PATCH** is supported for this URL.  **Top-level merge:** The server reads the current monitor, then for each of these properties—`name`, `disabled`, `description`, `ruleKind`, `definition`, `actionRules`—uses the request value if the key is present in the body, otherwise keeps the stored value. Keys omitted from the body do not change.  **Replace entire subtrees:** If `definition` or `actionRules` appears in the body, it **replaces the whole** stored `definition` or `actionRules` value. The server does **not** deep-merge inside `definition`, inside individual action rules, or inside nested structures (for example an action rule’s `definition`). To change part of the monitor definition or action configuration, send the complete `definition` and/or full `actionRules` array you want saved.  **Action rules:** when a rule\'s `definition.inline` is `true` the action belongs to this monitor, and sending the rule back updates that action in place, keeping its `actionId`. To rotate a PagerDuty `routing_key`, which sits in `definition.webhook.body`, GET the monitor, edit the key, and PATCH `actionRules` back. A rule pointing at a shared action (`definition.inline` is `false`) is bound by `actionId` alone; change a shared action\'s payload on the action itself.  **Not controlled by the body:** Other monitor fields (such as `id` from the path, or `monitorVersion`) are not updated from this JSON body using the merge rules above.  **Extra properties:** Any other top-level JSON properties in the body are ignored for this merge (they are not written to the monitor). 
      * Update a MonitorV2
      */
     async updateMonitorRaw(requestParameters: MonitorApiUpdateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -470,7 +602,7 @@ export class MonitorApi extends runtime.BaseAPI {
     }
 
     /**
-     * Partially updates a monitor. Only **PATCH** is supported for this URL.  **Top-level merge:** The server reads the current monitor, then for each of these properties—`name`, `disabled`, `description`, `ruleKind`, `definition`, `actionRules`—uses the request value if the key is present in the body, otherwise keeps the stored value. Keys omitted from the body do not change.  **Replace entire subtrees:** If `definition` or `actionRules` appears in the body, it **replaces the whole** stored `definition` or `actionRules` value. The server does **not** deep-merge inside `definition`, inside individual action rules, or inside nested structures (for example an action rule’s `definition`). To change part of the monitor definition or action configuration, send the complete `definition` and/or full `actionRules` array you want saved.  **Not controlled by the body:** Other monitor fields (such as `id` from the path, or `monitorVersion`) are not updated from this JSON body using the merge rules above.  **Extra properties:** Any other top-level JSON properties in the body are ignored for this merge (they are not written to the monitor). 
+     * Partially updates a monitor. Only **PATCH** is supported for this URL.  **Top-level merge:** The server reads the current monitor, then for each of these properties—`name`, `disabled`, `description`, `ruleKind`, `definition`, `actionRules`—uses the request value if the key is present in the body, otherwise keeps the stored value. Keys omitted from the body do not change.  **Replace entire subtrees:** If `definition` or `actionRules` appears in the body, it **replaces the whole** stored `definition` or `actionRules` value. The server does **not** deep-merge inside `definition`, inside individual action rules, or inside nested structures (for example an action rule’s `definition`). To change part of the monitor definition or action configuration, send the complete `definition` and/or full `actionRules` array you want saved.  **Action rules:** when a rule\'s `definition.inline` is `true` the action belongs to this monitor, and sending the rule back updates that action in place, keeping its `actionId`. To rotate a PagerDuty `routing_key`, which sits in `definition.webhook.body`, GET the monitor, edit the key, and PATCH `actionRules` back. A rule pointing at a shared action (`definition.inline` is `false`) is bound by `actionId` alone; change a shared action\'s payload on the action itself.  **Not controlled by the body:** Other monitor fields (such as `id` from the path, or `monitorVersion`) are not updated from this JSON body using the merge rules above.  **Extra properties:** Any other top-level JSON properties in the body are ignored for this merge (they are not written to the monitor). 
      * Update a MonitorV2
      */
     async updateMonitor(requestParameters: MonitorApiUpdateMonitorRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {

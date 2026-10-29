@@ -101,7 +101,7 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Invocation graph returned successfully. |  -  |
-| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange). |  -  |
+| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange, NotConfigured). |  -  |
 | **401** | Unauthorized — missing or invalid credentials (platform auth layer; body conforms to Apm-Error). |  -  |
 | **403** | Forbidden — caller lacks permission for this resource (body conforms to Apm-Error). |  -  |
 | **404** | Not found — unrecognized route (body conforms to Apm-Error). |  -  |
@@ -194,7 +194,7 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Environments listed successfully. |  -  |
-| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange). |  -  |
+| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange, NotConfigured). |  -  |
 | **401** | Unauthorized — missing or invalid credentials (platform auth layer; body conforms to Apm-Error). |  -  |
 | **403** | Forbidden — caller lacks permission for this resource (body conforms to Apm-Error). |  -  |
 | **404** | Not found — unrecognized route (body conforms to Apm-Error). |  -  |
@@ -207,11 +207,11 @@ example().catch(console.error);
 
 ## listApmServices
 
-> ApmServicesListResponse listApmServices(serviceName, environment, serviceNamespace, startTime, endTime, expand, limit, offset, orderBy)
+> ApmServicesListResponse listApmServices(serviceName, environment, serviceNamespace, serviceType, startTime, endTime, expand, limit, offset, orderBy)
 
 List APM services with RED metrics
 
-&gt; **Beta — may change; breaking changes are coordinated with affected &gt; customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under &#x60;redMetrics&#x60;. Filters are exact-match on &#x60;serviceName&#x60;, &#x60;environment&#x60;, and &#x60;serviceNamespace&#x60;; an omitted filter matches every value of that dimension.  When &#x60;expand&#x3D;true&#x60;, each row\&#39;s &#x60;redMetrics.series[]&#x60; additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive &#x60;series[].timestamp&#x60;. When &#x60;expand&#x60; is false or omitted, &#x60;series&#x60; is absent (not &#x60;null&#x60;, not an empty array).  Zero matches return &#x60;200&#x60; with &#x60;services: []&#x60; and &#x60;meta.totalCount: 0&#x60;. &#x60;meta.totalCount&#x60; is &#x60;-1&#x60; when an exact count is too expensive to compute; in that case paginate by advancing &#x60;offset&#x60; until a page shorter than &#x60;limit&#x60; is returned.  Response size grows with the number of rows on the page and, when &#x60;expand&#x3D;true&#x60;, with the number of series points per row. A wide window combined with &#x60;expand&#x3D;true&#x60; can therefore make a single page exceed the server response-size limit and return &#x60;413 PayloadTooLarge&#x60;. Recover by narrowing the time window or requesting a smaller &#x60;limit&#x60;. &#x60;limit&#x60; is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when &#x60;expand&#x3D;true&#x60;. 
+&gt; **Beta — may change; breaking changes are coordinated with affected &gt; customers. Suitable for evaluation, not production reliance.**  Lists services, one row per service, each carrying a closed RED metrics snapshot under &#x60;redMetrics&#x60;. Filters are exact-match on &#x60;serviceName&#x60;, &#x60;environment&#x60;, &#x60;serviceNamespace&#x60;, and &#x60;serviceType&#x60;; an omitted filter matches every value of that dimension. Omit &#x60;serviceType&#x60; to return every catalog type (&#x60;Service&#x60;, &#x60;Database&#x60;, &#x60;Messaging&#x60;). External values are not catalog types (&#x60;400&#x60;). When &#x60;serviceType&#x60; is omitted and &#x60;serviceName&#x60; is set, the name matches &#x60;service.name&#x60; OR &#x60;peer.db.name&#x60; OR &#x60;peer.messaging.system&#x60;.  When &#x60;expand&#x3D;true&#x60;, each row\&#39;s &#x60;redMetrics.series[]&#x60; additionally carries a per-bucket time series across the query window; read the bucket cadence from the spacing between consecutive &#x60;series[].timestamp&#x60;. When &#x60;expand&#x60; is false or omitted, &#x60;series&#x60; is absent (not &#x60;null&#x60;, not an empty array).  Zero matches return &#x60;200&#x60; with &#x60;services: []&#x60; and &#x60;meta.totalCount: 0&#x60;. &#x60;meta.totalCount&#x60; is &#x60;-1&#x60; when an exact count is too expensive to compute; in that case paginate by advancing &#x60;offset&#x60; until a page shorter than &#x60;limit&#x60; is returned.  Response size grows with the number of rows on the page and, when &#x60;expand&#x3D;true&#x60;, with the number of series points per row. A wide window combined with &#x60;expand&#x3D;true&#x60; can therefore make a single page exceed the server response-size limit and return &#x60;413 PayloadTooLarge&#x60;. Recover by narrowing the time window or requesting a smaller &#x60;limit&#x60;. &#x60;limit&#x60; is never rejected for being too large: it is clamped to its maximum server-side, and to a lower maximum when &#x60;expand&#x3D;true&#x60;. 
 
 ### Example
 
@@ -237,6 +237,8 @@ async function example() {
     environment: environment_example,
     // string | OTel service.namespace. Single-value exact-match filter; omit (or pass an empty value) to match services in any namespace.  (optional)
     serviceNamespace: serviceNamespace_example,
+    // string | Single-value exact-match catalog type filter for health and `/v1/apm/services`. Omit (or pass an empty value) to match every catalog type. Allowed values are `Service`, `Database`, and `Messaging`; `MessageBroker` and `Message Broker` are accepted as aliases for `Messaging`. `All`, external types, and unknown values are not accepted (`400`).  (optional)
+    serviceType: serviceType_example,
     // string | RFC3339 window start (inclusive). The query window is `[startTime, endTime)`. The two bounds are independent: omit `startTime` and it defaults to `endTime − 1h`; omit `endTime` and it defaults to now; omit both for the last hour. `startTime` must be earlier than `endTime`, otherwise `BadRequest`.  (optional)
     startTime: 2013-10-20T19:20:30+01:00,
     // string | RFC3339 window end (exclusive). Defaults to now when omitted. Pairs with `startTime` to form the `[startTime, endTime)` window; see `startTime` for the full defaulting rule.  (optional)
@@ -271,6 +273,7 @@ example().catch(console.error);
 | **serviceName** | `string` | OTel service.name. Single-value exact-match filter; omit (or pass an empty value) to match services with any service.name.  | [Optional] [Defaults to `undefined`] |
 | **environment** | `string` | OTel deployment.environment. Single-value exact-match filter; omit (or pass an empty value) to match services in any environment.  | [Optional] [Defaults to `undefined`] |
 | **serviceNamespace** | `string` | OTel service.namespace. Single-value exact-match filter; omit (or pass an empty value) to match services in any namespace.  | [Optional] [Defaults to `undefined`] |
+| **serviceType** | `string` | Single-value exact-match catalog type filter for health and &#x60;/v1/apm/services&#x60;. Omit (or pass an empty value) to match every catalog type. Allowed values are &#x60;Service&#x60;, &#x60;Database&#x60;, and &#x60;Messaging&#x60;; &#x60;MessageBroker&#x60; and &#x60;Message Broker&#x60; are accepted as aliases for &#x60;Messaging&#x60;. &#x60;All&#x60;, external types, and unknown values are not accepted (&#x60;400&#x60;).  | [Optional] [Defaults to `undefined`] |
 | **startTime** | `string` | RFC3339 window start (inclusive). The query window is &#x60;[startTime, endTime)&#x60;. The two bounds are independent: omit &#x60;startTime&#x60; and it defaults to &#x60;endTime − 1h&#x60;; omit &#x60;endTime&#x60; and it defaults to now; omit both for the last hour. &#x60;startTime&#x60; must be earlier than &#x60;endTime&#x60;, otherwise &#x60;BadRequest&#x60;.  | [Optional] [Defaults to `undefined`] |
 | **endTime** | `string` | RFC3339 window end (exclusive). Defaults to now when omitted. Pairs with &#x60;startTime&#x60; to form the &#x60;[startTime, endTime)&#x60; window; see &#x60;startTime&#x60; for the full defaulting rule.  | [Optional] [Defaults to `undefined`] |
 | **expand** | `boolean` | Endpoint-specific opt-in. On /v1/apm/services, expand&#x3D;true populates redMetrics.series[] on every row.  | [Optional] [Defaults to `false`] |
@@ -296,7 +299,7 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Services listed successfully. |  -  |
-| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange). |  -  |
+| **400** | Bad request (BadRequest, RequiredParamMissing, InvalidTimestamp, OutOfAcceleratedRange, NotConfigured). |  -  |
 | **401** | Unauthorized — missing or invalid credentials. |  -  |
 | **403** | Forbidden — the caller lacks permission for this resource. |  -  |
 | **404** | Not found. |  -  |

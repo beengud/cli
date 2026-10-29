@@ -97,7 +97,7 @@ example().catch(console.error);
 
 ## deleteReferenceTable
 
-> UpdateReferenceTable200Response deleteReferenceTable(id)
+> ReferenceTablesMessageResponse deleteReferenceTable(id)
 
 Delete a reference table
 
@@ -146,7 +146,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**UpdateReferenceTable200Response**](UpdateReferenceTable200Response.md)
+[**ReferenceTablesMessageResponse**](ReferenceTablesMessageResponse.md)
 
 ### Authorization
 
@@ -279,9 +279,9 @@ async function example() {
     label: label_example,
     // string | Filter by the user who created the reference tables. (optional)
     createdBy: createdBy_example,
-    // number | The maximum number of items to return per page. (optional)
+    // number | The maximum number of items to return per page. Defaults to 100; values above 1000 are capped to 1000. (optional)
     limit: 56,
-    // number | The index of the first item to return (pagination offset). (optional)
+    // number | The index of the first item to return (pagination offset). Defaults to 0. (optional)
     offset: 56,
   } satisfies QueryReferenceTablesRequest;
 
@@ -304,8 +304,8 @@ example().catch(console.error);
 |------------- | ------------- | ------------- | -------------|
 | **label** | `string` | Name of the reference table to search for (supports substring match). | [Optional] [Defaults to `undefined`] |
 | **createdBy** | `string` | Filter by the user who created the reference tables. | [Optional] [Defaults to `undefined`] |
-| **limit** | `number` | The maximum number of items to return per page. | [Optional] [Defaults to `100`] |
-| **offset** | `number` | The index of the first item to return (pagination offset). | [Optional] [Defaults to `0`] |
+| **limit** | `number` | The maximum number of items to return per page. Defaults to 100; values above 1000 are capped to 1000. | [Optional] [Defaults to `100`] |
+| **offset** | `number` | The index of the first item to return (pagination offset). Defaults to 0. | [Optional] [Defaults to `0`] |
 
 ### Return type
 
@@ -328,7 +328,6 @@ example().catch(console.error);
 | **400** | Bad request |  -  |
 | **401** | Unauthorized |  -  |
 | **403** | Forbidden |  -  |
-| **404** | Resource not found |  -  |
 | **429** | Rate limit reached |  -  |
 | **5XX** | Internal server error |  -  |
 
@@ -495,6 +494,7 @@ example().catch(console.error);
 | **401** | Unauthorized |  -  |
 | **403** | Forbidden |  -  |
 | **404** | Resource not found |  -  |
+| **409** | Conflict |  -  |
 | **429** | Rate limit reached |  -  |
 | **5XX** | Internal server error |  -  |
 

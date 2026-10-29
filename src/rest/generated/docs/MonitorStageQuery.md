@@ -1,0 +1,17 @@
+
+# MonitorStageQuery
+
+One stage of a monitor\'s input query.
+
+## Properties
+
+Name | Type
+------------ | -------------
+`id` | string
+`input` | [Array&lt;MonitorStageInput&gt;](MonitorStageInput.md)
+`pipeline` | string
+
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+

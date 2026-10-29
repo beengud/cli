@@ -9,7 +9,13 @@ import {
 } from "bun:test";
 import { createMockContext, suppressAnsiColor } from "../../test-helpers";
 import type { Config } from "../../lib/config";
-import { MonitorV2RuleKind, type MonitorV2 } from "../../rest/generated";
+import { MonitorHealth } from "../../rest/generated";
+import {
+  MonitorV2ActionType,
+  MonitorV2RuleKind,
+  type Monitor,
+  type MonitorV2ActionRule,
+} from "../../rest/monitor/types";
 
 const loadConfigFn = mock(
   (): Config => ({
@@ -19,21 +25,18 @@ const loadConfigFn = mock(
   }),
 );
 
-function monitorStub(
-  id: string,
-  overrides: Partial<MonitorV2> = {},
-): MonitorV2 {
+function monitorStub(id: string, overrides: Partial<Monitor> = {}): Monitor {
   return {
     id,
     name: "Test Monitor",
     ruleKind: MonitorV2RuleKind.Count,
-    definition: {} as MonitorV2["definition"],
+    definition: {},
     ...overrides,
   };
 }
 
 const getMonitorFn = mock(
-  (_params: { config: Config; id: number }): Promise<MonitorV2 | null> =>
+  (_params: { config: Config; id: number }): Promise<Monitor | null> =>
     Promise.resolve(monitorStub("42")),
 );
 
@@ -108,7 +111,7 @@ describe("monitor view — API forwarding", () => {
 describe("monitor view — output", () => {
   beforeEach(() => getMonitorFn.mockClear());
 
-  test("JSON output matches MonitorV2 shape", async () => {
+  test("JSON output matches Monitor shape", async () => {
     getMonitorFn.mockImplementationOnce(() =>
       Promise.resolve(
         monitorStub("42", {
@@ -119,11 +122,44 @@ describe("monitor view — output", () => {
     );
     const { context, stdout } = createMockContext();
     await view.call(context, { json: true }, "42", deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2;
+    const result = JSON.parse(stdout.join("")) as Monitor;
     expect(result).toMatchObject({
       id: "42",
       name: "My Monitor",
       ruleKind: MonitorV2RuleKind.Threshold,
+    });
+  });
+
+  test("JSON output includes actionRules, health, and effectiveScheduling when the API payload has them", async () => {
+    const actionRules: MonitorV2ActionRule[] = [
+      {
+        actionId: "41075519",
+        definition: {
+          inline: true,
+          type: MonitorV2ActionType.Slack,
+        },
+      },
+    ];
+    const effectiveScheduling = {
+      transform: { freshnessGoal: "60000000000" },
+    };
+    getMonitorFn.mockImplementationOnce(() =>
+      Promise.resolve(
+        monitorStub("41072994", {
+          name: "clone-config-parity",
+          actionRules,
+          health: MonitorHealth.Running,
+          effectiveScheduling,
+        }),
+      ),
+    );
+    const { context, stdout } = createMockContext();
+    await view.call(context, { json: true }, "41072994", deps);
+    const result = JSON.parse(stdout.join("")) as Record<string, unknown>;
+    expect(result).toMatchObject({
+      actionRules,
+      health: MonitorHealth.Running,
+      effectiveScheduling,
     });
   });
 });

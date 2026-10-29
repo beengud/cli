@@ -18,7 +18,7 @@ Name | Type
 `updatedBy` | [User](User.md)
 `datasetId` | string
 `checksum` | string
-`schema` | [Array&lt;ReferenceTablesTableSchemaInner&gt;](ReferenceTablesTableSchemaInner.md)
+`schema` | [Array&lt;ReferenceTablesField&gt;](ReferenceTablesField.md)
 `primaryKey` | Array&lt;string&gt;
 `labelField` | string
 

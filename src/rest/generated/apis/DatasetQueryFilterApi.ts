@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Observe API
+ * Observe by Snowflake API
  * # Overview Welcome to the Observe API Docs!  The Observe API is a RESTful API. POST bodies and responses are typically JSON-encoded.  ## Authentication Requests to the Observe API are authenticated with an API token. The token can be supplied using HTTP Bearer authentication: ``` // passing token as bearer token curl -H \"Authorization: Bearer <customerid> <token>\" https://<customerid>.<observe-domain>.com/v1/... ``` 
  *
  * The version of the OpenAPI document: 1.0.230307

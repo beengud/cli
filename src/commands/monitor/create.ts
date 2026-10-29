@@ -8,7 +8,7 @@ import {
   MonitorV2RuleKind,
   type MonitorV2ActionRule,
   type MonitorV2Definition,
-} from "../../rest/generated";
+} from "../../rest/monitor/types";
 import { loadConfig } from "../../lib/config";
 import { formatApiError } from "../../lib/format-error";
 import { muteStatusWriter } from "../../lib/writer";
@@ -68,7 +68,7 @@ export async function create(
 
     const created = await createMonitorImpl({
       config,
-      monitorV2: {
+      monitor: {
         name: parsed.name,
         ruleKind: parsed.ruleKind as MonitorV2RuleKind,
         definition: parsed.definition as MonitorV2Definition,
@@ -126,7 +126,7 @@ export const createCommand = defineCommand({
   docs: {
     brief: "Create a new monitor",
     fullDescription: [
-      "Create a new MonitorV2 monitor from a JSON file.",
+      "Create a new monitor from a JSON file.",
       "",
       "Required fields in the JSON file:",
       "  name       (string)  Monitor name",

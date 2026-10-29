@@ -21,18 +21,22 @@ import { worksheetRoutes } from "./commands/worksheet/index.js";
 // import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 // import { metricRoutes } from "./commands/metric/index.js";
 // import { queryCommand } from "./commands/query.js";
-// Trimmed: rely on REST APIs the target tenant's OpenAPI spec does not expose, so
-// they are absent from the regenerated src/rest/generated client (skill→SkillsApi,
-// tag/tag-value→V2KnowledgeGraphApi/TagsApi/TagValuesApi). Restore if the tenant
-// exposes them. See src/rest/client.ts. NOTE: upstream renamed `tag-key`→`tag` (#54).
+// Trimmed: skill/tag/tag-value are REST-backed. The tenant spec now exposes
+// SkillsApi/TagsApi/TagValuesApi and the regenerated client has them; restoring
+// these commands is a separate, tested change. See src/rest/client.ts.
+// NOTE: upstream renamed `tag-key`→`tag` (#54).
 // import { skillRoutes } from "./commands/skill/index.js";
 // import { tagRoutes } from "./commands/tag/index.js";
 // import { tagValueRoutes } from "./commands/tag-value/index.js";
 import { cliRoutes } from "./commands/cli/index.js";
+import { dashboardRoutes } from "./commands/dashboard/index.js";
 import { datasetRoutes } from "./commands/dataset/index.js";
 import { docsRoutes } from "./commands/docs/index.js";
 import { helpCommand } from "./commands/help.js";
 import { monitorRoutes } from "./commands/monitor/index.js";
+// Trimmed: inbound-share needs ExternalSharesApi, which the tenant OpenAPI spec
+// does not expose. See src/rest/client.ts.
+// import { inboundShareRoutes } from "./commands/inbound-share/index.js";
 import { CURRENT_CLI_VERSION } from "./lib/constants.js";
 import { defineRoutes } from "./lib/stricli-wrappers.js";
 
@@ -58,7 +62,9 @@ export const routes = defineRoutes({
     // "data-connection": dataConnectionRoutes,
     // datastream: datastreamRoutes,
     // "datastream-token": datastreamTokenRoutes,
+    // "inbound-share": inboundShareRoutes,
     docs: docsRoutes,
+    dashboard: dashboardRoutes,
     board: boardRoutes,
     folder: folderRoutes,
     opal: opalRoutes,

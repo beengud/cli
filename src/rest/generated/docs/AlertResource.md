@@ -20,6 +20,8 @@ Name | Type
 `monitorVersion` | string
 `monitor` | [MonitorRef](MonitorRef.md)
 `muted` | boolean
+`aiChats` | [Array&lt;ChatResource&gt;](ChatResource.md)
+`automaticInvestigation` | [AlertAutomaticInvestigation](AlertAutomaticInvestigation.md)
 `resolvedServiceBinding` | [AlertResolvedServiceBinding](AlertResolvedServiceBinding.md)
 `stats` | [AlertActionStats](AlertActionStats.md)
 

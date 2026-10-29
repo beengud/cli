@@ -1,7 +1,7 @@
 
 # ApmServiceType
 
-Role of a service-keyed row. PascalCase per style guide.
+Kind of service. Each value selects the correlation tag that holds the service name, which is the tag to filter on:  - `Service` → `service.name` - `Database` → `peer.db.name` - `Messaging` → `peer.messaging.system` - `ExternalCall` → `peer.server.address` (uninstrumented hosts)  When more than one key is present, precedence is `Service` > `Database` > `Messaging` > `ExternalCall`. When `type` is null (unknown catalog type), use `service.name`. 
 
 ## Properties
 

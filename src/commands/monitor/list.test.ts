@@ -9,7 +9,7 @@ import {
 } from "bun:test";
 import { createMockContext, suppressAnsiColor } from "../../test-helpers";
 import type { Config } from "../../lib/config";
-import { MonitorV2RuleKind, type MonitorV2Terse } from "../../rest/generated";
+import { MonitorRuleKind, type MonitorListItem } from "../../rest/generated";
 
 const loadConfigFn = mock(
   (): Config => ({
@@ -19,29 +19,31 @@ const loadConfigFn = mock(
   }),
 );
 
-function monitorTerseStub(
+/** Build a MonitorListItem stub. Only the fields the list command reads are
+ *  populated; the cast keeps the stub stable as the API spec grows fields. */
+function monitorStub(
   id: string,
   name: string,
-  overrides: Partial<MonitorV2Terse> = {},
-): MonitorV2Terse {
+  overrides: Partial<MonitorListItem> = {},
+): MonitorListItem {
   return {
     id,
     name,
-    description: "",
+    description: null,
     disabled: false,
-    ruleKind: MonitorV2RuleKind.Count,
+    ruleKind: MonitorRuleKind.Count,
     ...overrides,
-  };
+  } as unknown as MonitorListItem;
 }
 
-const STUB_MONITORS: MonitorV2Terse[] = [
-  monitorTerseStub("1", "Alpha Monitor", { ruleKind: MonitorV2RuleKind.Count }),
-  monitorTerseStub("2", "Beta Monitor", {
-    ruleKind: MonitorV2RuleKind.Threshold,
+const STUB_MONITORS: MonitorListItem[] = [
+  monitorStub("1", "Alpha Monitor", { ruleKind: MonitorRuleKind.Count }),
+  monitorStub("2", "Beta Monitor", {
+    ruleKind: MonitorRuleKind.Threshold,
     disabled: true,
   }),
-  monitorTerseStub("3", "Gamma Monitor", {
-    ruleKind: MonitorV2RuleKind.Promote,
+  monitorStub("3", "Gamma Monitor", {
+    ruleKind: MonitorRuleKind.Promote,
   }),
 ];
 
@@ -98,11 +100,11 @@ describe("monitor list — kind filter", () => {
     const { context, stdout } = createMockContext();
     await list.call(
       context,
-      { kind: [MonitorV2RuleKind.Count], json: true },
+      { kind: [MonitorRuleKind.Count], json: true },
       deps,
     );
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
-    expect(result.every((m) => m.ruleKind === MonitorV2RuleKind.Count)).toBe(
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
+    expect(result.every((m) => m.ruleKind === MonitorRuleKind.Count)).toBe(
       true,
     );
   });
@@ -112,19 +114,17 @@ describe("monitor list — kind filter", () => {
     await list.call(
       context,
       {
-        kind: [MonitorV2RuleKind.Count, MonitorV2RuleKind.Promote],
+        kind: [MonitorRuleKind.Count, MonitorRuleKind.Promote],
         json: true,
       },
       deps,
     );
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
-    expect(
-      result.every((m) => m.ruleKind !== MonitorV2RuleKind.Threshold),
-    ).toBe(true);
-    expect(result.some((m) => m.ruleKind === MonitorV2RuleKind.Count)).toBe(
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
+    expect(result.every((m) => m.ruleKind !== MonitorRuleKind.Threshold)).toBe(
       true,
     );
-    expect(result.some((m) => m.ruleKind === MonitorV2RuleKind.Promote)).toBe(
+    expect(result.some((m) => m.ruleKind === MonitorRuleKind.Count)).toBe(true);
+    expect(result.some((m) => m.ruleKind === MonitorRuleKind.Promote)).toBe(
       true,
     );
   });
@@ -136,15 +136,15 @@ describe("monitor list — disabled filter", () => {
   test("--disabled returns only disabled monitors", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { disabled: true, json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result.length).toBeGreaterThan(0);
-    expect(result.every((m) => m.disabled === true)).toBe(true);
+    expect(result.every((m) => m.disabled)).toBe(true);
   });
 
   test("--no-disabled returns only enabled monitors", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { disabled: false, json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result.length).toBeGreaterThan(0);
     expect(result.every((m) => !m.disabled)).toBe(true);
   });
@@ -156,15 +156,15 @@ describe("monitor list — sorting", () => {
   test("--sort name returns monitors in alphabetical order", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { sort: "name", json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
-    const names = result.map((m) => m.name ?? "");
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
+    const names = result.map((m) => m.name);
     expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
   });
 
   test("--sort id returns monitors in ascending numeric id order", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { sort: "id", json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     const ids = result.map((m) => Number(m.id));
     expect(ids).toEqual([...ids].sort((a, b) => a - b));
   });
@@ -173,14 +173,14 @@ describe("monitor list — sorting", () => {
 describe("monitor list — output", () => {
   beforeEach(() => listMonitorsFn.mockClear());
 
-  test("JSON output matches MonitorV2Terse shape", async () => {
+  test("JSON output matches MonitorListItem shape", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result[0]).toMatchObject({
       id: "1",
       name: "Alpha Monitor",
-      ruleKind: MonitorV2RuleKind.Count,
+      ruleKind: MonitorRuleKind.Count,
       disabled: false,
     });
   });
@@ -199,7 +199,7 @@ describe("monitor list — pagination", () => {
   test("--limit 2 returns only the first 2 results", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { limit: 2, json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result.length).toBe(2);
     expect(result[0]!.id).toBe("1");
     expect(result[1]!.id).toBe("2");
@@ -208,14 +208,14 @@ describe("monitor list — pagination", () => {
   test("--offset 1 skips the first result", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { offset: 1, json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result[0]!.id).toBe("2");
   });
 
   test("--limit 2 --offset 1 returns one result starting from index 1", async () => {
     const { context, stdout } = createMockContext();
     await list.call(context, { limit: 2, offset: 1, json: true }, deps);
-    const result = JSON.parse(stdout.join("")) as MonitorV2Terse[];
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result.length).toBe(2);
     expect(result[0]!.id).toBe("2");
     expect(result[1]!.id).toBe("3");
