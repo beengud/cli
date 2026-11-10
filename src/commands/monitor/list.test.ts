@@ -47,9 +47,19 @@ const STUB_MONITORS: MonitorListItem[] = [
   }),
 ];
 
+/** Stands in for the REST helper: serves the requested window of the stub
+ *  list, the way listMonitors does after paging. */
 const listMonitorsFn = mock(
-  (_params: { config: Config; nameSubstring?: string }) =>
-    Promise.resolve([...STUB_MONITORS]),
+  (params: {
+    config: Config;
+    nameSubstring?: string;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const start = params.offset ?? 0;
+    const end = params.limit == null ? undefined : start + params.limit;
+    return Promise.resolve(STUB_MONITORS.slice(start, end));
+  },
 );
 
 let list: (typeof import("./list"))["list"];
@@ -219,6 +229,52 @@ describe("monitor list — pagination", () => {
     expect(result.length).toBe(2);
     expect(result[0]!.id).toBe("2");
     expect(result[1]!.id).toBe("3");
+  });
+
+  test("forwards limit and offset to listMonitors when no local filter applies", async () => {
+    const { context } = createMockContext();
+    await list.call(context, { limit: 2, offset: 1, json: true }, deps);
+    expect(listMonitorsFn).toHaveBeenCalledTimes(1);
+    expect(listMonitorsFn.mock.calls[0]![0]).toMatchObject({
+      limit: 2,
+      offset: 1,
+    });
+  });
+
+  test("forwards the default limit when --limit is not set", async () => {
+    const { context } = createMockContext();
+    await list.call(context, { json: true }, deps);
+    expect(listMonitorsFn.mock.calls[0]![0]).toMatchObject({
+      limit: 100,
+      offset: 0,
+    });
+  });
+
+  test("fetches the whole list and windows locally when --kind filters", async () => {
+    const { context, stdout } = createMockContext();
+    await list.call(
+      context,
+      { kind: [MonitorRuleKind.Promote], limit: 1, json: true },
+      deps,
+    );
+    const call = listMonitorsFn.mock.calls[0]![0];
+    expect(call).not.toHaveProperty("limit");
+    expect(call).not.toHaveProperty("offset");
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
+    expect(result.map((m) => m.id)).toEqual(["3"]);
+  });
+
+  test("fetches the whole list and windows locally when --sort orders", async () => {
+    const { context, stdout } = createMockContext();
+    await list.call(
+      context,
+      { sort: "name", limit: 1, offset: 2, json: true },
+      deps,
+    );
+    const call = listMonitorsFn.mock.calls[0]![0];
+    expect(call).not.toHaveProperty("limit");
+    const result = JSON.parse(stdout.join("")) as MonitorListItem[];
+    expect(result.map((m) => m.id)).toEqual(["3"]);
   });
 
   test("pagination hint shown in table output when results equal limit", async () => {

@@ -131,9 +131,20 @@ export async function list(
 
     writer.info("Searching monitors...");
 
+    const limit = flags.limit ?? DEFAULT_LIMIT;
+    const start = flags.offset ?? 0;
+
+    // --kind, --disabled and --sort apply to the whole list, so they need
+    // every monitor before the window is cut; the REST helper pages through
+    // the list for us. Otherwise the window is the server's: limit/offset go
+    // through to the API (which pages past its own page size as needed).
+    const windowLocally =
+      flags.kind != null || flags.disabled != null || flags.sort != null;
+
     let monitors = await listMonitorsImpl({
       config,
       nameSubstring: flags.match,
+      ...(windowLocally ? {} : { limit, offset: start }),
     });
 
     if (flags.kind) {
@@ -149,10 +160,10 @@ export async function list(
       monitors = sortMonitors(monitors, flags.sort);
     }
 
-    const limit = flags.limit ?? DEFAULT_LIMIT;
-    const start = flags.offset ?? 0;
     const totalBeforePaging = monitors.length;
-    monitors = monitors.slice(start, start + limit);
+    if (windowLocally) {
+      monitors = monitors.slice(start, start + limit);
+    }
 
     const fieldNames = flags.fields ?? DEFAULT_FIELDS;
 
@@ -171,7 +182,13 @@ export async function list(
       return;
     }
 
-    writer.write(chalk.green(`Found ${totalBeforePaging} monitor(s):\n`));
+    writer.write(
+      chalk.green(
+        windowLocally
+          ? `Found ${totalBeforePaging} monitor(s):\n`
+          : `Found ${monitors.length} monitor(s):\n`,
+      ),
+    );
 
     const columns = fieldNames.map((field) => FIELD_COLUMNS[field]);
     writer.write(formatTable(monitors, columns));
