@@ -48,6 +48,7 @@ async function captureError(promise: Promise<unknown>): Promise<unknown> {
 }
 
 let listMonitors: (typeof import("./list-monitors"))["listMonitors"];
+let listMonitorsPage: (typeof import("./list-monitors"))["listMonitorsPage"];
 
 beforeAll(async () => {
   void mock.module(clientModulePath, () => ({
@@ -58,6 +59,7 @@ beforeAll(async () => {
 
   const mod = await import("./list-monitors.ts");
   listMonitors = mod.listMonitors;
+  listMonitorsPage = mod.listMonitorsPage;
 });
 
 afterAll(() => {
@@ -100,6 +102,14 @@ describe("listMonitors — versioned path", () => {
     expect(calls).toHaveLength(1);
   });
 });
+
+/** Reject the versioned request with 403; serve a bare legacy array on retry. */
+function legacyOnRetryTop(legacy: unknown) {
+  return (params: Record<string, unknown>) =>
+    params.observeApiVersion == null
+      ? Promise.resolve(legacy)
+      : Promise.reject(responseError(403));
+}
 
 describe("listMonitors — paging", () => {
   /** A server holding `total` monitors (ids "1".."total") that serves the
@@ -212,6 +222,53 @@ describe("listMonitors — paging", () => {
 
     expect(result).toHaveLength(150);
     expect(calls.map((c) => c.offset)).toEqual([0, 100, 150]);
+  });
+
+  test("listMonitorsPage reports the server's total next to the window", async () => {
+    respond = pagedServer(135);
+
+    const page = await listMonitorsPage({ config: CONFIG, limit: 5 });
+
+    expect(page.monitors).toHaveLength(5);
+    expect(page.totalCount).toBe(135);
+  });
+
+  test("an unknown total (-1) is reported as undefined", async () => {
+    const server = pagedServer(3);
+    respond = async (params) => {
+      const page = (await server(params)) as { monitors: unknown[] };
+      return { monitors: page.monitors, meta: { totalCount: -1 } };
+    };
+
+    const page = await listMonitorsPage({ config: CONFIG });
+
+    expect(page.monitors).toHaveLength(3);
+    expect(page.totalCount).toBeUndefined();
+  });
+
+  test("a response without meta is paged until an empty page, not thrown", async () => {
+    const server = pagedServer(150, 100);
+    respond = async (params) => {
+      const page = (await server(params)) as { monitors: unknown[] };
+      return { monitors: page.monitors };
+    };
+
+    const page = await listMonitorsPage({ config: CONFIG });
+
+    expect(page.monitors).toHaveLength(150);
+    expect(page.totalCount).toBeUndefined();
+    expect(calls.map((c) => c.offset)).toEqual([0, 100, 150]);
+  });
+
+  test("the legacy page reports the whole list as the total", async () => {
+    respond = legacyOnRetryTop(
+      ["1", "2", "3", "4", "5"].map((id) => ({ id, name: `m${id}` })),
+    );
+
+    const page = await listMonitorsPage({ config: CONFIG, limit: 2 });
+
+    expect(page.monitors.map((m) => m.id)).toEqual(["1", "2"]);
+    expect(page.totalCount).toBe(5);
   });
 
   test("the filter is sent with every page", async () => {

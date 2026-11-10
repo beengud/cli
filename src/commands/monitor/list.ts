@@ -1,7 +1,7 @@
 import { defineCommand } from "../../lib/stricli-wrappers";
 import chalk from "chalk";
 import type { LocalContext } from "../../context";
-import { listMonitors } from "../../rest/monitor/list-monitors";
+import { listMonitorsPage } from "../../rest/monitor/list-monitors";
 import { type MonitorListItem, MonitorRuleKind } from "../../rest/generated";
 import { ruleKindColor } from "./monitor-utils";
 import { loadConfig } from "../../lib/config";
@@ -107,7 +107,7 @@ const FIELD_COLUMNS = {
 
 export interface ListMonitorsDeps {
   loadConfig?: typeof loadConfig;
-  listMonitors?: typeof listMonitors;
+  listMonitors?: typeof listMonitorsPage;
 }
 
 export async function list(
@@ -117,7 +117,7 @@ export async function list(
 ): Promise<void> {
   const {
     loadConfig: loadConfigImpl = loadConfig,
-    listMonitors: listMonitorsImpl = listMonitors,
+    listMonitors: listMonitorsImpl = listMonitorsPage,
   } = deps;
   const { process, writer: _writer } = this;
 
@@ -141,11 +141,12 @@ export async function list(
     const windowLocally =
       flags.kind != null || flags.disabled != null || flags.sort != null;
 
-    let monitors = await listMonitorsImpl({
+    const page = await listMonitorsImpl({
       config,
       nameSubstring: flags.match,
       ...(windowLocally ? {} : { limit, offset: start }),
     });
+    let monitors = page.monitors;
 
     if (flags.kind) {
       const filterKinds = flags.kind;
@@ -160,7 +161,11 @@ export async function list(
       monitors = sortMonitors(monitors, flags.sort);
     }
 
-    const totalBeforePaging = monitors.length;
+    // How many monitors the list holds before the window: the filtered
+    // length when windowed locally, the server's count otherwise.
+    const total = windowLocally
+      ? monitors.length
+      : (page.totalCount ?? monitors.length);
     if (windowLocally) {
       monitors = monitors.slice(start, start + limit);
     }
@@ -182,13 +187,7 @@ export async function list(
       return;
     }
 
-    writer.write(
-      chalk.green(
-        windowLocally
-          ? `Found ${totalBeforePaging} monitor(s):\n`
-          : `Found ${monitors.length} monitor(s):\n`,
-      ),
-    );
+    writer.write(chalk.green(`Found ${total} monitor(s):\n`));
 
     const columns = fieldNames.map((field) => FIELD_COLUMNS[field]);
     writer.write(formatTable(monitors, columns));
