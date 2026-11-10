@@ -2,6 +2,7 @@ import type { Config } from "../../lib/config";
 import { ObserveRestSDK } from "../client";
 import { ResponseError } from "../generated/runtime";
 import type {
+  Meta,
   MonitorApiListMonitorsRequest,
   MonitorListItem,
   MonitorListResponse,
@@ -18,6 +19,17 @@ export type ListMonitorsParams = {
   config: Config;
 } & Omit<MonitorApiListMonitorsRequest, "observeApiVersion">;
 
+export interface MonitorListPage {
+  /** The requested window of the list, in server order. */
+  monitors: MonitorListItem[];
+  /**
+   * How many monitors match the filter, independent of the window, when the
+   * server says (`meta.totalCount`); `undefined` when it reports -1 (unknown)
+   * or omits it. The legacy shape returns the whole list, so it is its length.
+   */
+  totalCount: number | undefined;
+}
+
 /**
  * Lists monitors through the versioned REST endpoint, following `limit`/
  * `offset` paging until the requested window is complete.
@@ -33,15 +45,16 @@ export type ListMonitorsParams = {
  * shape, so the header gets a 403) ignores `limit`/`offset`, so the window
  * is applied locally instead.
  */
-export async function listMonitors({
+export async function listMonitorsPage({
   config,
   limit,
   offset,
   ...params
-}: ListMonitorsParams): Promise<MonitorListItem[]> {
+}: ListMonitorsParams): Promise<MonitorListPage> {
   const sdk = new ObserveRestSDK(config);
   const start = offset ?? 0;
   const collected: MonitorListItem[] = [];
+  let totalCount: number | undefined;
   let next = start;
 
   for (;;) {
@@ -69,9 +82,11 @@ export async function listMonitors({
       // Feature not yet enabled for this account or cluster. Fall back to the
       // legacy bare-array response (no Observe-Api-Version header), which
       // returns every monitor and ignores limit/offset.
-      return listMonitorsLegacy(sdk, params).then((all) =>
-        all.slice(start, limit == null ? undefined : start + limit),
-      );
+      const all = await listMonitorsLegacy(sdk, params);
+      return {
+        monitors: all.slice(start, limit == null ? undefined : start + limit),
+        totalCount: all.length,
+      };
     }
 
     const page = response.monitors;
@@ -79,19 +94,25 @@ export async function listMonitors({
     next += page.length;
     if (page.length === 0) break;
 
-    // The envelope is typed as always carrying `meta.totalCount`; check the
-    // runtime value anyway so a server that omits it cannot loop forever.
-    const total: unknown = response.meta.totalCount;
-    if (typeof total !== "number") {
-      // No usable meta (not the documented envelope): a short page is the end.
-      if (page.length < pageLimit) break;
-    } else if (total >= 0 && next >= total) {
-      break;
+    // The envelope is typed as always carrying `meta.totalCount`; the client
+    // hands the JSON through unconverted, so read it defensively: a server
+    // that omits it, or reports -1 (unknown), is paged until an empty page.
+    const total: unknown = (response as { meta?: Partial<Meta> }).meta
+      ?.totalCount;
+    if (typeof total === "number" && total >= 0) {
+      totalCount = total;
+      if (next >= total) break;
     }
-    // total === -1 (unknown): keep paging until an empty page.
   }
 
-  return collected;
+  return { monitors: collected, totalCount };
+}
+
+/** `listMonitorsPage` without the count: the monitors in the window. */
+export async function listMonitors(
+  params: ListMonitorsParams,
+): Promise<MonitorListItem[]> {
+  return (await listMonitorsPage(params)).monitors;
 }
 
 async function listMonitorsLegacy(

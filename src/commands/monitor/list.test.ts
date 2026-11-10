@@ -48,7 +48,7 @@ const STUB_MONITORS: MonitorListItem[] = [
 ];
 
 /** Stands in for the REST helper: serves the requested window of the stub
- *  list, the way listMonitors does after paging. */
+ *  list with the server's total, the way listMonitorsPage does after paging. */
 const listMonitorsFn = mock(
   (params: {
     config: Config;
@@ -58,7 +58,10 @@ const listMonitorsFn = mock(
   }) => {
     const start = params.offset ?? 0;
     const end = params.limit == null ? undefined : start + params.limit;
-    return Promise.resolve(STUB_MONITORS.slice(start, end));
+    return Promise.resolve({
+      monitors: STUB_MONITORS.slice(start, end),
+      totalCount: STUB_MONITORS.length,
+    });
   },
 );
 
@@ -196,7 +199,9 @@ describe("monitor list — output", () => {
   });
 
   test("shows warning when no monitors are returned", async () => {
-    listMonitorsFn.mockImplementationOnce(() => Promise.resolve([]));
+    listMonitorsFn.mockImplementationOnce(() =>
+      Promise.resolve({ monitors: [], totalCount: 0 }),
+    );
     const { context, stdout } = createMockContext();
     await list.call(context, {}, deps);
     expect(stdout.join("")).toContain("No monitors found");
@@ -275,6 +280,24 @@ describe("monitor list — pagination", () => {
     expect(call).not.toHaveProperty("limit");
     const result = JSON.parse(stdout.join("")) as MonitorListItem[];
     expect(result.map((m) => m.id)).toEqual(["3"]);
+  });
+
+  test("table header counts the whole list, not the window", async () => {
+    const { context, stdout } = createMockContext();
+    await list.call(context, { limit: 2 }, deps);
+    const out = stdout.join("");
+    expect(out).toContain("Found 3 monitor(s)");
+    expect(out).toContain("--offset 2");
+  });
+
+  test("table header counts the filtered list when windowed locally", async () => {
+    const { context, stdout } = createMockContext();
+    await list.call(
+      context,
+      { kind: [MonitorRuleKind.Count, MonitorRuleKind.Promote], limit: 1 },
+      deps,
+    );
+    expect(stdout.join("")).toContain("Found 2 monitor(s)");
   });
 
   test("pagination hint shown in table output when results equal limit", async () => {
