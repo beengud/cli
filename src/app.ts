@@ -21,13 +21,9 @@ import { worksheetRoutes } from "./commands/worksheet/index.js";
 // import { ingestTokenRoutes } from "./commands/ingest-token/index.js";
 // import { metricRoutes } from "./commands/metric/index.js";
 // import { queryCommand } from "./commands/query.js";
-// Trimmed: skill/tag/tag-value are REST-backed. The tenant spec now exposes
-// SkillsApi/TagsApi/TagValuesApi and the regenerated client has them; restoring
-// these commands is a separate, tested change. See src/rest/client.ts.
-// NOTE: upstream renamed `tag-key`→`tag` (#54).
-// import { skillRoutes } from "./commands/skill/index.js";
-// import { tagRoutes } from "./commands/tag/index.js";
-// import { tagValueRoutes } from "./commands/tag-value/index.js";
+import { skillRoutes } from "./commands/skill/index.js";
+import { tagRoutes } from "./commands/tag/index.js";
+import { tagValueRoutes } from "./commands/tag-value/index.js";
 import { cliRoutes } from "./commands/cli/index.js";
 import { dashboardRoutes } from "./commands/dashboard/index.js";
 import { datasetRoutes } from "./commands/dataset/index.js";
@@ -46,13 +42,15 @@ export const routes = defineRoutes({
     help: helpCommand,
     // TEMP: trimmed pending full Observe schema access (introspection disabled). Restore when schema available.
     // auth: authRoutes,
-    // "tag-value": tagValueRoutes,
-    // tag: tagRoutes,        (upstream #54 renamed tag-key→tag)
-    // "tag-key": tagRoutes,  (pre-rename alias)
+    "tag-value": tagValueRoutes,
+    tag: tagRoutes,
+    // Pre-rename name for `tag` (upstream #54), kept resolvable so existing
+    // scripts and agent skills don't break. Hidden below; drop once usage dies off.
+    "tag-key": tagRoutes,
     dataset: datasetRoutes,
     // metric: metricRoutes,
     // query: queryCommand,
-    // skill: skillRoutes,
+    skill: skillRoutes,
     alert: alertRoutes,
     monitor: monitorRoutes,
     apm: apmRoutes,
