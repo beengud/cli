@@ -38,8 +38,11 @@ observe skill install --all
 > the REST client is missing tenant-absent APIs (`bun codegen:rest`, needs a Java
 > runtime). They are commented out in `src/app.ts` and `src/rest/client.ts`
 > (search for "TEMP: trimmed"). The currently active commands are: `help`,
-> `dataset`, `alert`, `monitor`, `docs`, `board`, `folder`, `opal`, `fleet`,
-> `schema`, `worksheet`, `cli`.
+> `tag-value`, `tag` (and its hidden pre-rename alias `tag-key`), `dataset`,
+> `skill`, `alert`, `monitor`, `apm`, `docs`, `dashboard`, `board`, `folder`,
+> `opal`, `fleet`, `schema`, `worksheet`, `cli`. Disabled: `auth`, `metric`,
+> `query`, `content`, `ingest-token`, `datasource`, `data-connection`,
+> `datastream`, `datastream-token`, `inbound-share`.
 >
 > `schema introspect` additionally requires the tenant to have GraphQL
 > introspection enabled. `dataset dry-run` and `dataset impact` are wired but
@@ -47,69 +50,69 @@ observe skill install --all
 > (`saveDatasetDryRun` removed; `getDatasetsAffectedByDatasetUpdate` result
 > fields renamed) and the new shapes cannot be re-derived without introspection.
 
-| Command                                 | Description                                             |
-| --------------------------------------- | ------------------------------------------------------- |
-| `observe help`                          | Show help information                                   |
-| `observe auth login`                    | Authenticate with Observe (browser or device code flow) |
-| `observe auth logout`                   | Clear stored credentials                                |
-| `observe auth status`                   | Show current authentication status                      |
-| `observe auth configure`                | Manually configure CLI credentials                      |
-| `observe auth profile list`             | List all saved profiles                                 |
-| `observe auth profile use`              | Switch the default profile                              |
-| `observe tag-value list`                | Search tag values                                       |
-| `observe tag list`                      | Search tags                                             |
-| `observe dataset list`                  | List datasets with optional filtering                   |
-| `observe dataset view`                  | View dataset details and schema                         |
+| Command                                 | Description                                              |
+| --------------------------------------- | -------------------------------------------------------- |
+| `observe help`                          | Show help information                                    |
+| `observe auth login`                    | Authenticate with Observe (browser or device code flow)  |
+| `observe auth logout`                   | Clear stored credentials                                 |
+| `observe auth status`                   | Show current authentication status                       |
+| `observe auth configure`                | Manually configure CLI credentials                       |
+| `observe auth profile list`             | List all saved profiles                                  |
+| `observe auth profile use`              | Switch the default profile                               |
+| `observe tag-value list`                | Search tag values                                        |
+| `observe tag list`                      | Search tags                                              |
+| `observe dataset list`                  | List datasets with optional filtering                    |
+| `observe dataset view`                  | View dataset details and schema                          |
 | `observe dataset dry-run`               | Dry-run a dataset pipeline change (unverified on tenant) |
-| `observe dataset impact`                | Report datasets affected by a change (unverified)       |
-| `observe metric list`                   | Search and list metrics                                 |
-| `observe metric view`                   | View metric details and dimensions                      |
-| `observe query`                         | Execute OPAL queries on datasets                        |
-| `observe skill list`                    | List AI agent skills                                    |
-| `observe skill view`                    | View skill details and content                          |
-| `observe skill install`                 | Install skills into your coding agents                  |
-| `observe skill update`                  | Update installed skills to the latest version           |
-| `observe alert list`                    | List alerts with severity and status filtering          |
-| `observe alert view`                    | View full alert details                                 |
-| `observe monitor mute list`             | List and search monitor mute rules                      |
-| `observe monitor mute view`             | View full monitor mute rule details                     |
-| `observe monitor mute create`           | Create a monitor mute rule                              |
-| `observe monitor mute update`           | Update a monitor mute rule                              |
-| `observe monitor mute delete`           | Delete a monitor mute rule                              |
-| `observe datastream create`             | Create a new datastream                                 |
-| `observe datastream list`               | List datastreams                                        |
-| `observe datastream view`               | View a datastream by ID                                 |
-| `observe datastream update`             | Update a datastream                                     |
-| `observe datastream-token check-status` | Poll a datastream token until ingest data arrives       |
-| `observe docs search`                   | Search Observe's documentation                          |
-| `observe board create`                  | Create a board (dashboard) from a JSON file             |
-| `observe board update`                  | Update an existing board from a JSON file               |
-| `observe board get`                     | Get a board by ID as JSON                               |
-| `observe board list`                    | List boards in a workspace                              |
-| `observe board delete`                  | Delete a board by ID                                    |
-| `observe board scaffold`                | Print a minimal board JSON template                     |
-| `observe board set-default`             | Set the default dashboard for a dataset                 |
-| `observe board clear-default`           | Clear the default dashboard for a dataset               |
-| `observe folder create`                 | Create a folder (use --ensure to make it idempotent)    |
-| `observe folder get`                    | Look up a folder by name and print its ID               |
-| `observe folder update`                 | Update a folder's name, description, or icon URL        |
-| `observe folder delete`                 | Delete a folder by ID                                   |
-| `observe opal check`                    | Validate an OPAL pipeline and print its result schema   |
-| `observe opal verbs`                    | List all OPAL verbs                                     |
-| `observe opal functions`                | List all OPAL functions                                 |
-| `observe opal validate-ingest`          | Validate an OPAL ingest filter against a dataset        |
-| `observe fleet status`                  | Current status of all observe-agent instances           |
-| `observe fleet host`                    | observe-agent details for a single host                 |
-| `observe fleet versions`                | observe-agent versions across the fleet                 |
-| `observe fleet auth`                    | observe-agent auth-check status across the fleet        |
-| `observe schema introspect`             | Dump the GraphQL schema as JSON (introspection req'd)   |
-| `observe worksheet list`                | List worksheets in a workspace                          |
-| `observe worksheet get`                 | Get a worksheet by ID as JSON                           |
-| `observe worksheet create`              | Create a worksheet from a JSON file                     |
-| `observe worksheet delete`              | Delete a worksheet by ID                                |
-| `observe cli install`                   | Configure shell integration (PATH, completions)         |
-| `observe cli uninstall`                 | Remove shell integration                                |
-| `observe cli upgrade`                   | Upgrade to the latest version                           |
+| `observe dataset impact`                | Report datasets affected by a change (unverified)        |
+| `observe metric list`                   | Search and list metrics                                  |
+| `observe metric view`                   | View metric details and dimensions                       |
+| `observe query`                         | Execute OPAL queries on datasets                         |
+| `observe skill list`                    | List AI agent skills                                     |
+| `observe skill view`                    | View skill details and content                           |
+| `observe skill install`                 | Install skills into your coding agents                   |
+| `observe skill update`                  | Update installed skills to the latest version            |
+| `observe alert list`                    | List alerts with severity and status filtering           |
+| `observe alert view`                    | View full alert details                                  |
+| `observe monitor mute list`             | List and search monitor mute rules                       |
+| `observe monitor mute view`             | View full monitor mute rule details                      |
+| `observe monitor mute create`           | Create a monitor mute rule                               |
+| `observe monitor mute update`           | Update a monitor mute rule                               |
+| `observe monitor mute delete`           | Delete a monitor mute rule                               |
+| `observe datastream create`             | Create a new datastream                                  |
+| `observe datastream list`               | List datastreams                                         |
+| `observe datastream view`               | View a datastream by ID                                  |
+| `observe datastream update`             | Update a datastream                                      |
+| `observe datastream-token check-status` | Poll a datastream token until ingest data arrives        |
+| `observe docs search`                   | Search Observe's documentation                           |
+| `observe board create`                  | Create a board (dashboard) from a JSON file              |
+| `observe board update`                  | Update an existing board from a JSON file                |
+| `observe board get`                     | Get a board by ID as JSON                                |
+| `observe board list`                    | List boards in a workspace                               |
+| `observe board delete`                  | Delete a board by ID                                     |
+| `observe board scaffold`                | Print a minimal board JSON template                      |
+| `observe board set-default`             | Set the default dashboard for a dataset                  |
+| `observe board clear-default`           | Clear the default dashboard for a dataset                |
+| `observe folder create`                 | Create a folder (use --ensure to make it idempotent)     |
+| `observe folder get`                    | Look up a folder by name and print its ID                |
+| `observe folder update`                 | Update a folder's name, description, or icon URL         |
+| `observe folder delete`                 | Delete a folder by ID                                    |
+| `observe opal check`                    | Validate an OPAL pipeline and print its result schema    |
+| `observe opal verbs`                    | List all OPAL verbs                                      |
+| `observe opal functions`                | List all OPAL functions                                  |
+| `observe opal validate-ingest`          | Validate an OPAL ingest filter against a dataset         |
+| `observe fleet status`                  | Current status of all observe-agent instances            |
+| `observe fleet host`                    | observe-agent details for a single host                  |
+| `observe fleet versions`                | observe-agent versions across the fleet                  |
+| `observe fleet auth`                    | observe-agent auth-check status across the fleet         |
+| `observe schema introspect`             | Dump the GraphQL schema as JSON (introspection req'd)    |
+| `observe worksheet list`                | List worksheets in a workspace                           |
+| `observe worksheet get`                 | Get a worksheet by ID as JSON                            |
+| `observe worksheet create`              | Create a worksheet from a JSON file                      |
+| `observe worksheet delete`              | Delete a worksheet by ID                                 |
+| `observe cli install`                   | Configure shell integration (PATH, completions)          |
+| `observe cli uninstall`                 | Remove shell integration                                 |
+| `observe cli upgrade`                   | Upgrade to the latest version                            |
 
 ### Experimental commands
 
